@@ -10,7 +10,7 @@ setup(
 )
 
 setup(
-    name="support",
+    name="spectools",
     version="0.0.0",
     author="Belle Liu",
     author_email="belle.l24358@gmail.com",
