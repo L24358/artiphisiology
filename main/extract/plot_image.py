@@ -17,6 +17,7 @@ for s in range(len(shape_coor)):
     new_image_array = shift(image_array, [dx, dy, 0], mode="nearest")
     new_image = vis.get_image(new_image_array)
     new_image.save(f"/src/data/shapes_centered/idx={s}_pxl={tot_pxl}.png")
+    nav.npsave(new_image_array, "/src", "data", "stimulus", f"idx={s}_pxl={tot_pxl}.npy")
 
     plt.close("all")
     

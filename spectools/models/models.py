@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 import numpy as np
+import handytools.navigator as nav
 
 def get_parameters(name):
     if name == "alexnet":
@@ -11,7 +12,7 @@ def get_parameters(name):
     return params
 
 def get_alexnet(hidden_keys=[]):
-    params = get_parameters("alexnet")
+    params = nav.pklload("/src", "data", "models", "alexnet_parameters.pkl")
     model = AlexNet(hidden_keys=hidden_keys)
     model.load_state_dict(params)
     return model

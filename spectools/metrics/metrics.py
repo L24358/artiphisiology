@@ -27,6 +27,14 @@ def curvature(dp, ddp):
 
 def angle(p): return np.arctan2(*p[::-1])
 
+def responsive(Rs, thre):
+    res, idx = [], []
+    for i, R in enumerate(Rs):
+        if np.mean(R) >= thre:
+            res.append(R)
+            idx.append(i)
+    return np.vstack(res), idx
+
 def fvmax(invec):
     """By Taekjun Kim, Anitha Pasupathy, Wyeth Bair, April 23, 2020."""
     num = np.shape(invec)[0]
