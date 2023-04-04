@@ -4,7 +4,11 @@ import spectools.basics as bcs
 import spectools.models.models as mdl
 import handytools.navigator as nav
 
-model = mdl.get_alexnet(hidden_keys=[8])
+# hyperparameters
+hidden_key = 10
+
+# load model
+model = mdl.get_alexnet(hidden_keys=[hidden_key])
 
 image_arrays = []
 for s in range(51):
@@ -17,6 +21,6 @@ image_arrays = np.vstack(image_arrays)
 
 X = torch.from_numpy(image_arrays)
 model(X)
-R = model.hidden_info[8][0] # shape = (51, 256, 13, 13)
+R = model.hidden_info[hidden_key][0] # shape = (51, 256, 13, 13)
 Rc = bcs.get_center_response(R)
-nav.npsave(Rc, "/src", "data", "responses", "CR_stim=shape_key=8.npy")
+nav.npsave(Rc, "/src", "data", "responses", f"CR_stim=shape_key={hidden_key}.npy")

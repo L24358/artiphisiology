@@ -2,8 +2,29 @@ import logging
 import numpy as np
 from typing import Callable
 from numpy.linalg import pinv
+from scipy.optimize import differential_evolution
 
 logger = logging.getLogger(__name__)
+
+class DESolver:
+    def __init__(self,
+                 obj_function: Callable,
+                 bounds: list,
+                 fit_function: Callable,
+                 max_iter: int = 1000,
+                 ):
+        self.obj_function = obj_function
+        self.bounds = bounds
+        self.fit_function = fit_function
+        self.max_iter = max_iter
+
+    def fit(self, x, y):
+        result = differential_evolution(self.obj_function, self.bounds, maxiter=self.max_iter, args=(x, y))
+        self.coef = result["x"]
+        return self.coef
+    
+    def predict(self, xbundle):
+        return self.fit_function(xbundle, self.coef)
 
 class GNSolver:
     """

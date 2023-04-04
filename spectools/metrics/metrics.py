@@ -1,5 +1,6 @@
 import numpy as np
 from scipy.interpolate import CubicSpline
+from scipy.stats import kurtosis
 
 def double_exp(ksts, coefs):
     mu_c, sig_c, mu_a, sig_a, k = coefs
@@ -14,6 +15,10 @@ def double_exp(ksts, coefs):
 
 def double_exp_wrap(xbundle, coefs):
     return np.array([double_exp(ksts, coefs) for ksts in xbundle])
+
+def apc_obj_func(coefs, xbundle, Rs):
+    R_preds = double_exp_wrap(xbundle, coefs)
+    return sum((R_preds - Rs)**2)
 
 def cubic_spline(invec, ival=1/200): # invec.shape = (-1, 2)
     cs = CubicSpline(np.linspace(0, 1, len(invec)), invec)
@@ -31,6 +36,15 @@ def responsive(Rs, thre):
     res, idx = [], []
     for i, R in enumerate(Rs):
         if np.mean(R) >= thre:
+            res.append(R)
+            idx.append(i)
+    return np.vstack(res), idx
+
+def response_sparsity(Rs):
+    res, idx = [], []
+    for i, R in enumerate(Rs):
+        k = kurtosis(R)
+        if (k >= 2.9) and (k <= 42):
             res.append(R)
             idx.append(i)
     return np.vstack(res), idx
