@@ -1,0 +1,7 @@
+### TTD 04062023 ###
+1. Read through slides and code the metrics
+2. Download the stimuli and make sure it works
+3. RF size calculation and comparison
+4. "Minimum circuitry" and how to test it:
+    -- Tanh for "dynamic range insensitivity"
+    -- ON + OFF convergence for "On-off invariance"
