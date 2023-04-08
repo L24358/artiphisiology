@@ -5,3 +5,8 @@
 4. "Minimum circuitry" and how to test it:
     -- Tanh for "dynamic range insensitivity"
     -- ON + OFF convergence for "On-off invariance"
+
+### Stimulus ###
+* 225 Shape Stimulus; after that, texture
+* "centered": Pasupathy stimulus is centered
+* "rotated": Pasupathy stimulus is centered and rotated
