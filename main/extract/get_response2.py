@@ -1,3 +1,6 @@
+"""
+Response to (rotated) stimulus.
+""" 
 import torch
 import numpy as np
 import spectools.basics as bcs
@@ -8,7 +11,7 @@ import handytools.navigator as nav
 hidden_key = 8
 light = True
 linewidth = 1
-hollow = False
+hollow = True
 foldername = f"_rotated_hollow={int(hollow)}_lw={linewidth}"
 
 # load model

@@ -6,9 +6,9 @@ import handytools.navigator as nav
 from scipy.ndimage import shift
 
 # hyperparameters
-hollow = False
+hollow = True
 tot_pxl = 227
-linewidth = 5
+linewidth = 1
 
 # load data
 true_center = tot_pxl/2.0
@@ -16,6 +16,7 @@ shape_coor = nav.pklload("/src", "data", "stimulus", "shape_coor.pkl")
 filepath = ["/src", "data", f"stimulus_centered_hollow={int(hollow)}_lw={linewidth}"]
 nav.mkfile(*filepath)
 nav.mkfile(f"/src/graphs/shapes_centered_hollow={int(hollow)}_lw={linewidth}/")
+shift_dic = nav.pklload("/src", "data", "stimulus", f"shift_filled_pxl={tot_pxl}_lw={linewidth}.pkl") # key: idx, value: shift [dx, dy, 0] for each idx
 
 # hollow or full
 if hollow:
@@ -29,11 +30,11 @@ for s in range(len(shape_coor)):
     centroid = bcs.get_centroid(image_array, tot_pxl)
     dx, dy = true_center - centroid
 
-    new_image_array = shift(image_array, [dx, dy, 0], mode="nearest")
+    new_image_array = shift(image_array, shift_dic[s], mode="nearest")
     new_image = vis.get_image(new_image_array)
     new_image.save(f"/src/graphs/shapes_centered_hollow={int(hollow)}_lw={linewidth}/idx={s}_pxl={tot_pxl}.png")
     nav.npsave(new_image_array, *filepath, f"idx={s}_pxl={tot_pxl}.npy")
 
     plt.close("all")
-    
+
 

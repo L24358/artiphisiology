@@ -18,9 +18,9 @@ dic = {}
 for s in range(51):
     pr = pearsonr(R_fill[s], R_holl[s])[0]
     if not np.isnan(pr):
-        r2 = r2_score(R_fill[s], R_holl[s])
+        # r2 = r2_score(R_fill[s], R_holl[s])
         plt.scatter(R_fill[s], R_holl[s], color="k")
-        plt.xlabel("Resp. to filled shapes"); plt.ylabel("Resp. to outlines"); plt.title(f"\u03C1: {round(pr, 2)}, $r^2$: {round(r2, 2)}")
+        plt.xlabel("Resp. to filled shapes"); plt.ylabel("Resp. to outlines"); plt.title(f"\u03C1: {round(pr, 2)}") # , $r^2$: {round(r2, 2)}
         vis.savefig(f"idx={s}.png", folders=folders)
-        dic[s] = [r2, pr]
+        dic[s] = [pr]
 nav.pklsave(dic, "/src", "data", folders[0], "r2_pr.pkl")

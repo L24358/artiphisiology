@@ -1,3 +1,8 @@
+### TTD 040923 ###
+1. Fix dx, dy for outline --> done, passed visual sanity check, fixed up to fillhollow analysis (pre R2 fix)
+2. Self-defined r-squared value
+3. Dynamic range
+
 ### TTD 04062023 ###
 1. Read through slides and code the metrics
 2. Download the stimuli and make sure it works
