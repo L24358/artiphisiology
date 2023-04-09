@@ -1,6 +1,17 @@
+"""
+References:
+    - NMSE: https://math.stackexchange.com/questions/488964/the-definition-of-nmse-normalized-mean-square-error
+"""
+
 import numpy as np
 from scipy.interpolate import CubicSpline
 from scipy.stats import kurtosis
+
+def NMSE(x, y):
+    proj = (x+y)/2 # closest point on the x=y line to the data points
+    err = [np.linalg.norm([x[i]-proj[i], y[i]-proj[i]]) for i in range(len(x))] # distance (2-norm)
+    normalization = (np.std(x)*np.std(y))**0.5 # for scale invariance (tested)
+    return np.mean(err)/normalization
 
 def double_exp(ksts, coefs):
     mu_c, sig_c, mu_a, sig_a, k = coefs
@@ -93,3 +104,7 @@ def fvmax(invec):
     return outvec, doutvec
 
 
+if __name__ == "__main__":
+    x = np.array([5, 8, 6])
+    y = np.array([7, 7, 6])
+    nmse = NMSE(x, y) # check scale invariance

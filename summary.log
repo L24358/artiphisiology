@@ -1,6 +1,9 @@
 ### TTD 040923 ###
 1. Fix dx, dy for outline --> done, passed visual sanity check, fixed up to fillhollow analysis (pre R2 fix)
 2. Self-defined r-squared value
+    - Symmetric (O), through MSE
+    - Bounded (X)
+    - Scale-invariant (O), through division of standard deviation
 3. Dynamic range
 
 ### TTD 04062023 ###

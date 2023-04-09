@@ -2,8 +2,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import handytools.navigator as nav
 import handytools.visualizer as vis
-from sklearn.metrics import r2_score
 from scipy.stats import pearsonr
+from spectools.metrics.metrics import NMSE
 
 hidden_key = 8
 light = True
@@ -18,9 +18,12 @@ dic = {}
 for s in range(51):
     pr = pearsonr(R_fill[s], R_holl[s])[0]
     if not np.isnan(pr):
-        # r2 = r2_score(R_fill[s], R_holl[s])
-        plt.scatter(R_fill[s], R_holl[s], color="k")
-        plt.xlabel("Resp. to filled shapes"); plt.ylabel("Resp. to outlines"); plt.title(f"\u03C1: {round(pr, 2)}") # , $r^2$: {round(r2, 2)}
+        nmse = NMSE(R_fill[s], R_holl[s])
+        plt.scatter(R_fill[s], R_holl[s], color="b")
+        minn = min([min(R_fill[s]), min(R_holl[s])])
+        maxx = max([max(R_fill[s]), max(R_holl[s])])
+        plt.plot([minn, maxx], [minn, maxx], "k--") # plot x=y
+        plt.xlabel("Resp. to filled shapes"); plt.ylabel("Resp. to outlines"); plt.title(f"\u03C1: {round(pr, 2)}, NMSE: {round(nmse, 2)}") 
         vis.savefig(f"idx={s}.png", folders=folders)
-        dic[s] = [pr]
-nav.pklsave(dic, "/src", "data", folders[0], "r2_pr.pkl")
+        dic[s] = [pr, NMSE]
+nav.pklsave(dic, "/src", "data", folders[0], "fit_metrics.pkl")
