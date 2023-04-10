@@ -9,9 +9,10 @@ hidden_key = 8
 light = True
 linewidth = 1
 data_type = "rotated"
+scale = 1
 
-R_fill = nav.npload("/src", "data", f"responses_{data_type}_hollow=0_lw={linewidth}_light={int(light)}", f"CR_stim=shape_key={hidden_key}.npy")
-R_holl = nav.npload("/src", "data", f"responses_{data_type}_hollow=1_lw={linewidth}_light={int(light)}", f"CR_stim=shape_key={hidden_key}.npy")
+R_fill = nav.npload("/src", "data", f"responses_{data_type}_hollow=0_lw={linewidth}_light={int(light)}_scale={scale}", f"CR_stim=shape_key={hidden_key}.npy")
+R_holl = nav.npload("/src", "data", f"responses_{data_type}_hollow=1_lw={linewidth}_light={int(light)}_scale={scale}", f"CR_stim=shape_key={hidden_key}.npy")
 folders = [f"fillholl_{data_type}_key={hidden_key}_lw={linewidth}"]
 
 dic = {}

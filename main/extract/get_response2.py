@@ -1,5 +1,5 @@
 """
-Response to (rotated) stimulus.
+Response to (rotated and scaled) stimulus.
 """ 
 import torch
 import numpy as np
@@ -11,7 +11,8 @@ import handytools.navigator as nav
 hidden_key = 8
 light = True
 linewidth = 1
-hollow = True
+hollow = False
+scale = 0.25
 foldername = f"_rotated_hollow={int(hollow)}_lw={linewidth}"
 
 # load model
@@ -26,6 +27,7 @@ for s in range(51):
         # preprocess image value
         image_array = image_array/255. # dark BG (0), light image (1)
         if not light: image_array *= -1 # light BG (0), dark image (-1)
+        image_array *= scale # scale the dynamic range
 
         # preprocess image dimension
         image_array = np.swapaxes(image_array, 0, -1)
@@ -38,4 +40,4 @@ X = torch.from_numpy(image_arrays)
 model(X)
 R = model.hidden_info[hidden_key][0] # shape = (51, 256, 13, 13)
 Rc = bcs.get_center_response(R) # shape = (256, 51)
-nav.npsave(Rc, "/src", "data", "responses"+foldername+f"_light={int(light)}", f"CR_stim=shape_key={hidden_key}.npy")
+nav.npsave(Rc, "/src", "data", "responses"+foldername+f"_light={int(light)}_scale={scale}", f"CR_stim=shape_key={hidden_key}.npy")

@@ -7,6 +7,9 @@ import numpy as np
 from scipy.interpolate import CubicSpline
 from scipy.stats import kurtosis
 
+def IGV(data): # (mean) In-Group Variance, data.shape = (scale, images)
+    return np.mean([np.var(row) for row in data.T]) # TODO: normalize to data variance
+
 def NMSE(x, y):
     proj = (x+y)/2 # closest point on the x=y line to the data points
     err = [np.linalg.norm([x[i]-proj[i], y[i]-proj[i]]) for i in range(len(x))] # distance (2-norm)
