@@ -29,6 +29,7 @@ else:
     facecolor, edgecolor = "w", "w"
 
 # generate shape and center data
+# shift_dic = {}
 for s in range(len(shape_coor)):
     image_array = vis.get_shape(shape_coor[s], tot_pxl, facecolor=facecolor, edgecolor=edgecolor, linewidth=linewidth)[0]
     centroid = bcs.get_centroid(image_array, tot_pxl)

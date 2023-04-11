@@ -1,16 +1,20 @@
+### TTD 041023 ###
+1. New results are not pushed in this computer. (handytools, onoff related, range-len)
+
 ### TTD 040923 ###
-1. Fix dx, dy for outline --> done, passed visual sanity check, fixed up to fillhollow analysis (pre R2 fix)
-2. Self-defined r-squared value
+1. (O) Fix dx, dy for outline --> done, passed visual sanity check, fixed up to fillhollow analysis (pre R2 fix)
+2. (O) Self-defined r-squared value
     - Symmetric (O), through MSE
     - Bounded (X)
     - Scale-invariant (O), through division of standard deviation
-3. Dynamic range
+3. (*) Dynamic range
+4. (*) New model
 
 ### TTD 04062023 ###
-1. Read through slides and code the metrics
-2. Download the stimuli and make sure it works
-3. RF size calculation and comparison
-4. "Minimum circuitry" and how to test it:
+1. (*) Read through slides and code the metrics
+2. (O) Download the stimuli and make sure it works
+3. (P) RF size calculation and comparison
+4. (P) "Minimum circuitry" and how to test it:
     -- Tanh for "dynamic range insensitivity"
     -- ON + OFF convergence for "On-off invariance"
 
@@ -18,3 +22,9 @@
 * 225 Shape Stimulus; after that, texture
 * "centered": Pasupathy stimulus is centered
 * "rotated": Pasupathy stimulus is centered and rotated
+
+### Data Aquisition ###
+1. Run save_alexnet
+2. Run plot_image (may need to un-comment the shift_dic parts)
+3. Run plot_image2
+4. Run get_response2
