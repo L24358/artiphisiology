@@ -25,10 +25,12 @@ else:
     facecolor, edgecolor = "w", "w"
 
 # generate shape and center data
+# shift_dic = {}
 for s in range(len(shape_coor)):
     image_array = vis.get_shape(shape_coor[s], tot_pxl, facecolor=facecolor, edgecolor=edgecolor, linewidth=linewidth)[0]
     centroid = bcs.get_centroid(image_array, tot_pxl)
     dx, dy = true_center - centroid
+    # shift_dic[s] = [dx, dy, 0]
 
     new_image_array = shift(image_array, shift_dic[s], mode="nearest")
     new_image = vis.get_image(new_image_array)
@@ -37,4 +39,4 @@ for s in range(len(shape_coor)):
 
     plt.close("all")
 
-
+# nav.pklsave(shift_dic, "/src", "data", "stimulus", f"shift_filled_pxl={tot_pxl}_lw={linewidth}.pkl") # key: idx, value: shift [dx, dy, 0] for each idx

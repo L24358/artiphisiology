@@ -12,7 +12,7 @@ hidden_key = 8
 light = True
 linewidth = 1
 hollow = False
-scale = 0.25
+scale = 4
 foldername = f"_rotated_hollow={int(hollow)}_lw={linewidth}"
 
 # load model
@@ -27,7 +27,6 @@ for s in range(51):
         # preprocess image value
         image_array = image_array/255. # dark BG (0), light image (1)
         if not light: image_array *= -1 # light BG (0), dark image (-1)
-        image_array *= scale # scale the dynamic range
 
         # preprocess image dimension
         image_array = np.swapaxes(image_array, 0, -1)
