@@ -10,7 +10,7 @@ import handytools.navigator as nav
 from scipy.ndimage import shift
 
 # hyperparameters
-hollow = False
+hollow = True
 tot_pxl = 227
 linewidth = 1
 
