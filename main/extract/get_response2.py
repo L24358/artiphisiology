@@ -9,9 +9,9 @@ import handytools.navigator as nav
 
 # hyperparameters
 hidden_key = 8
-light = True
+light = False
 linewidth = 1
-hollow = False
+hollow = True
 scale = 1
 foldername = f"_rotated_hollow={int(hollow)}_lw={linewidth}"
 
