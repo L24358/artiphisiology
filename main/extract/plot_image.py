@@ -44,4 +44,4 @@ for s in range(len(shape_coor)):
 
     plt.close("all")
 
-if first_run: nav.pklsave(shift_dic, "/src", "data", "stimulus", f"shift_filled_pxl={tot_pxl}_lw={linewidth}.pkl")
+if first_run: nav.pklsave(shift_dic, "/src", "results", "stimulus", f"shift_filled_pxl={tot_pxl}_lw={linewidth}.pkl")

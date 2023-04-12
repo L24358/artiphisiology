@@ -14,7 +14,7 @@ folders = [f"{mtype}_dyrange_{data_type}_key={hidden_key}_lw={linewidth}"]
 
 Rs = []
 for scale in [0.25, 0.5, 1, 2, 4]:
-    R = nav.npload("/src", "data", f"responses_{data_type}_hollow=0_lw={linewidth}_light={int(light)}_scale={scale}", f"{mtype}_CR_stim=shape_key={hidden_key}.npy")
+    R = nav.npload("/src", "results", f"responses_{data_type}_hollow=0_lw={linewidth}_light={int(light)}_scale={scale}", f"{mtype}_CR_stim=shape_key={hidden_key}.npy")
     Rs.append(np.expand_dims(R, 0)) # (scale, units, images)
 Rs = np.vstack(Rs)
 Rs = np.swapaxes(Rs, 0, 1) # (units, scale, images)

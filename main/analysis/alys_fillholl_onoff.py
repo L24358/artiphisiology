@@ -9,8 +9,8 @@ linewidth = 1
 data_type = "rotated"
 mtype = "AN"
 
-fh_dic = nav.pklload("/src", "data", f"{mtype}_fillholl_{data_type}_key={hidden_key}_lw={linewidth}", "fit_metrics.pkl")
-oo_dic = nav.pklload("/src", "data", f"{mtype}_onoff_{data_type}_key={hidden_key}_lw={linewidth}", "fit_metrics.pkl")
+fh_dic = nav.pklload("/src", "results", f"{mtype}_fillholl_{data_type}_key={hidden_key}_lw={linewidth}", "fit_metrics.pkl")
+oo_dic = nav.pklload("/src", "results", f"{mtype}_onoff_{data_type}_key={hidden_key}_lw={linewidth}", "fit_metrics.pkl")
 
 keys = list(fh_dic.keys() & oo_dic.keys())
 r_fh = np.array([fh_dic[s] for s in keys]).flatten()
