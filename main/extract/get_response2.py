@@ -12,7 +12,7 @@ hidden_key = 8
 light = True
 linewidth = 1
 hollow = False
-scale = 4
+scale = 1
 foldername = f"_rotated_hollow={int(hollow)}_lw={linewidth}"
 
 # load model
@@ -21,6 +21,7 @@ rot_info = nav.pklload("/src", "data", "stimulus", "shape_info.pkl")["rotation"]
 
 image_arrays = []
 for s in range(51):
+    print("s: ", s)
     for r in range(rot_info[s]):
         image_array = nav.npload("/src", "data", "stimulus" + foldername, f"idx={s}_pxl=227_r={r}.npy") # shape = (227, 227, 4)
 
@@ -34,6 +35,7 @@ for s in range(51):
         image_array = np.expand_dims(image_array, 0)
         image_arrays.append(image_array)
 image_arrays = np.vstack(image_arrays)
+print("Image preprocessed.")
 
 X = torch.from_numpy(image_arrays)
 model(X)

@@ -6,6 +6,9 @@ import handytools.navigator as nav
 def get_parameters(name):
     if name == "alexnet":
         net = torch.hub.load('pytorch/vision:v0.10.0', 'alexnet', pretrained=True)
+    elif name == "vgg16":
+        net = torch.hub.load('pytorch/vision:v0.10.0', 'vgg11', pretrained=True)
+        import pdb; pdb.set_trace()
     else:
         raise ValueError(f"`name` cannot be {name}.")
     params = {name: parameter for name, parameter in net.named_parameters()}
@@ -72,3 +75,5 @@ class AlexNet(nn.Module):
         for key in self.hidden_keys: dic[key] = []
         self.hidden_info = {**dic, **self.hidden_info} # update, with priority given to existing self.hidden_info
 
+if __name__ == "__main__":
+    get_parameters("vgg16")

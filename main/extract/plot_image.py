@@ -9,7 +9,8 @@ from scipy.ndimage import shift
 hollow = True
 tot_pxl = 227
 linewidth = 1
-first_run = False # first_run should only be used if hollow=False
+first_run = False 
+if first_run: assert hollow == False # first_run should only be used if hollow=False
 
 # load data
 true_center = tot_pxl/2.0
@@ -43,4 +44,4 @@ for s in range(len(shape_coor)):
 
     plt.close("all")
 
-if first_run: nav.pklsave("/src", "data", "stimulus", f"shift_filled_pxl={tot_pxl}_lw={linewidth}.pkl")
+if first_run: nav.pklsave(shift_dic, "/src", "data", "stimulus", f"shift_filled_pxl={tot_pxl}_lw={linewidth}.pkl")
