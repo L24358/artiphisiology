@@ -1,6 +1,7 @@
 """
-Response to (rotated and scaled) stimulus.
-""" 
+Try out get_response2 on VGG16
+"""
+
 import torch
 import numpy as np
 import spectools.basics as bcs
@@ -16,7 +17,7 @@ scale = 1
 foldername = f"_rotated_hollow={int(hollow)}_lw={linewidth}"
 
 # load model
-model = mdl.get_alexnet(hidden_keys=[hidden_key])
+model = mdl.get_vgg16(hidden_keys=[hidden_key])
 rot_info = nav.pklload("/src", "data", "stimulus", "shape_info.pkl")["rotation"]
 
 image_arrays = []

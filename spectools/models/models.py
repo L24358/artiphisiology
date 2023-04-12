@@ -8,7 +8,6 @@ def get_parameters(name):
         net = torch.hub.load('pytorch/vision:v0.10.0', 'alexnet', pretrained=True)
     elif name == "vgg16":
         net = torch.hub.load('pytorch/vision:v0.10.0', 'vgg11', pretrained=True)
-        import pdb; pdb.set_trace()
     else:
         raise ValueError(f"`name` cannot be {name}.")
     params = {name: parameter for name, parameter in net.named_parameters()}
@@ -19,6 +18,83 @@ def get_alexnet(hidden_keys=[]):
     model = AlexNet(hidden_keys=hidden_keys)
     model.load_state_dict(params)
     return model
+
+def get_vgg16(hidden_keys=[]):
+    params = nav.pklload("/src", "data", "models", "vgg16_parameters.pkl")
+    model = VGG16(hidden_keys=hidden_keys)
+    model.load_state_dict(params)
+    return model
+
+class VGG16(nn.Module):
+    def __init__(
+        self, hidden_keys: list = [], num_classes: int = 1000, init_weights: bool = True, dropout: float = 0.5
+    ) -> None:
+        super().__init__()
+        self.features = nn.Sequential(
+            nn.Conv2d(3, 64, kernel_size=3, stride=1, padding=1),
+            nn.ReLU(inplace=True),
+            nn.MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False),
+            nn.Conv2d(64, 128, kernel_size=3, stride=1, padding=1),
+            nn.ReLU(inplace=True),
+            nn.MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False),
+            nn.Conv2d(128, 256, kernel_size=3, stride=1, padding=1),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(256, 256, kernel_size=3, stride=1, padding=1),
+            nn.ReLU(inplace=True),
+            nn.MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False),
+            nn.Conv2d(256, 512, kernel_size=3, stride=1, padding=1),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(512, 512, kernel_size=3, stride=1, padding=1),
+            nn.ReLU(inplace=True),
+            nn.MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False),
+            nn.Conv2d(512, 512, kernel_size=3, stride=1, padding=1),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(512, 512, kernel_size=3, stride=1, padding=1),
+            nn.ReLU(inplace=True),
+            nn.MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False),
+        )
+        self.avgpool = nn.AdaptiveAvgPool2d((7, 7))
+        self.classifier = nn.Sequential(
+            nn.Linear(512 * 7 * 7, 4096),
+            nn.ReLU(True),
+            nn.Dropout(p=dropout),
+            nn.Linear(4096, 4096),
+            nn.ReLU(True),
+            nn.Dropout(p=dropout),
+            nn.Linear(4096, num_classes),
+        )
+        if init_weights:
+            for m in self.modules():
+                if isinstance(m, nn.Conv2d):
+                    nn.init.kaiming_normal_(m.weight, mode="fan_out", nonlinearity="relu")
+                    if m.bias is not None:
+                        nn.init.constant_(m.bias, 0)
+                elif isinstance(m, nn.BatchNorm2d):
+                    nn.init.constant_(m.weight, 1)
+                    nn.init.constant_(m.bias, 0)
+                elif isinstance(m, nn.Linear):
+                    nn.init.normal_(m.weight, 0, 0.01)
+                    nn.init.constant_(m.bias, 0)
+
+        # initialize hidden info
+        self.hidden_info = {}
+        self.update_hidden_keys(hidden_keys)
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        x = x.float()
+        for i, child in enumerate(list(self.features.children())):
+            x = child(x)
+            if i in self.hidden_keys: self.hidden_info[i].append(x)
+        x = self.avgpool(x)
+        x = torch.flatten(x, 1)
+        out = self.classifier(x)
+        return out
+
+    def update_hidden_keys(self, keys):
+        dic = {}
+        self.hidden_keys = keys
+        for key in self.hidden_keys: dic[key] = []
+        self.hidden_info = {**dic, **self.hidden_info} # update, with priority given to existing self.hidden_info
 
 class AlexNet(nn.Module):
     def __init__(self, num_classes=1000, hidden_keys=[]):
