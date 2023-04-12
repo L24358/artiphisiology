@@ -28,6 +28,7 @@ for s in range(51):
         # preprocess image value
         image_array = image_array/255. # dark BG (0), light image (1)
         if not light: image_array *= -1 # light BG (0), dark image (-1)
+        image_array *= scale
 
         # preprocess image dimension
         image_array = np.swapaxes(image_array, 0, -1)
