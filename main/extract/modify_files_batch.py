@@ -1,7 +1,7 @@
 import os
 import handytools.navigator as nav
 
-path = "/src/data/"
+path = "/src/results/"
 constraint = lambda f: "CR" in f
 res = nav.recursive_search(path, constraint)
 
