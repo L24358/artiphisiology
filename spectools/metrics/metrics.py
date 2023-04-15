@@ -7,6 +7,10 @@ import numpy as np
 from scipy.interpolate import CubicSpline
 from scipy.stats import kurtosis
 
+def MSE(x, y): return np.mean((x-y)**2)
+
+def R2(x, y): return 1 - MSE(x, y)/np.std(x)/np.std(y)
+
 def IGV(data): # (mean) In-Group Variance, data.shape = (scale, images)
     return np.mean([np.var(row) for row in data.T]) # TODO: normalize to data variance
 

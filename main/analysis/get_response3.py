@@ -2,19 +2,24 @@
 Try out get_response2 on VGG16
 """
 
+import sys
 import torch
 import numpy as np
 import spectools.basics as bcs
 import spectools.models.models as mdl
 import handytools.navigator as nav
+import handytools.manipulator as man
+
+# argv
+argv_dic = man.argv_to_dic(sys.argv)
 
 # hyperparameters
-hidden_key = 8
+mtype = man.argv_manager(argv_dic, 1, "VGG16")
+hidden_key = man.argv_manager(argv_dic, 2, 8, tpe=int)
+hollow = man.argv_manager(argv_dic, 3, True, tpe=man.bool_int)
+scale = 1
 light = True
 linewidth = 1
-hollow = False
-scale = 4
-mtype = "VGG16"
 foldername = f"_rotated_hollow={int(hollow)}_lw={linewidth}"
 
 # load model
