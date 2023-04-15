@@ -15,11 +15,11 @@ argv_dic = man.argv_to_dic(sys.argv)
 
 # hyperparameters
 mtype = man.argv_manager(argv_dic, 1, "VGG16")
-hidden_key = man.argv_manager(argv_dic, 2, 8, tpe=int)
+hidden_key = man.argv_manager(argv_dic, 2, 22, tpe=int)
 hollow = man.argv_manager(argv_dic, 3, True, tpe=man.bool_int)
-scale = 1
-light = True
-linewidth = 1
+scale = man.argv_manager(argv_dic, 4, 1, tpe=int)
+light = man.argv_manager(argv_dic, 5, True, tpe=man.bool_int)
+linewidth = man.argv_manager(argv_dic, 6, 1, tpe=int)
 foldername = f"_rotated_hollow={int(hollow)}_lw={linewidth}"
 
 # load model

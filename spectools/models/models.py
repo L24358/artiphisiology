@@ -82,13 +82,22 @@ class VGG16(nn.Module):
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         x = x.float()
+
+        # features
         for i, child in enumerate(list(self.features.children())):
             x = child(x)
             if i in self.hidden_keys: self.hidden_info[i].append(x)
+
+        # avg pooling and flatten
         x = self.avgpool(x)
+        if i+1 in self.hidden_keys: self.hidden_info[i+1].append(x) # layer i+1
         x = torch.flatten(x, 1)
-        out = self.classifier(x)
-        return out
+
+        # classifier
+        for j, child in enumerate(list(self.classifier.children())):
+            x = child(x)
+            if (i+1)+(j+1) in self.hidden_keys: self.hidden_info[i+j+2].append(x) # starts from layer i+2=(i+1)+(j+1) because j=0
+        return x
 
     def update_hidden_keys(self, keys):
         dic = {}
@@ -142,8 +151,10 @@ class AlexNet(nn.Module):
         for i, child in enumerate(list(self.features.children())):
             x = child(x)
             if i in self.hidden_keys: self.hidden_info[i].append(x)
-        out = self.classifier(x)
-        return out
+        for j, child in enumerate(list(self.classifier.children())):
+            x = child(x)
+            if i+(j+1) in self.hidden_keys: self.hidden_info[i+j+1].append(x)
+        return x
 
     def update_hidden_keys(self, keys):
         dic = {}

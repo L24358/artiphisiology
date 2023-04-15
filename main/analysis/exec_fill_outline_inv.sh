@@ -1,6 +1,8 @@
-mtype="VGG16"
-hkey=16
+mtype="AN"
 
-python3 get_response3.py $mtype $hkey 0
-python3 get_response3.py $mtype $hkey 1
-python3 alys_fill_outline_inv.py $mtype $hkey
+for hkey in 3 8 10 15 18
+do
+    python3 get_response4.py $mtype $hkey 0 1 1 1 2
+    python3 get_response4.py $mtype $hkey 1 1 1 1 2
+    python3 alys_fill_outline_inv.py $mtype $hkey
+done
