@@ -61,3 +61,23 @@ for n in range(256):
 
 plt.plot(diff)
 vis.savefig()
+
+"""
+Random Thoughts:
+
+Can I draw a contribution graph?
+
+What is the minimum circuitry for DRI?
+--> Having a tanh function should acheive that. (There is no tanh)
+--> All contributing units should have response values that are at \pm 1.
+    --> If previous units are already DRI: trace upwards
+    --> If not: check if they saturate
+--> ReLU requires two layers to mimic tanh (one to cut from below, one from above)
+    --> Find the layer that starts becoming not DRI.
+    --> Check if that layer has opposite slopes for ReLU.
+    --> Check if the scaled input falls into the "cut-off" regions, and yields the bias.
+    
+What is the minimum circuitry for OOI?
+--> Having two units with opposite polarity but same response.
+--> OOI can also be implemented via the mechanism above for DRI.
+"""
