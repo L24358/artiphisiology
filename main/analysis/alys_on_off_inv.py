@@ -18,6 +18,8 @@ hollow = False
 linewidth = 1
 scale = 1
 preprocess = man.argv_manager(argv_dic, 3, 2, tpe=int)
+print(f"Begin processing: Fill-outline invariance analysis, for network={mtype}, key={hidden_key}, preprocess={preprocess}.")
+
 
 # catch warnings
 warnings.filterwarnings("ignore")
@@ -39,7 +41,7 @@ for s in range(len(R_light)):
         minn = min([min(R_light[s]), min(R_dark[s])])
         maxx = max([max(R_light[s]), max(R_dark[s])])
         plt.plot([minn, maxx], [minn, maxx], "k--") # plot x=y
-        plt.xlabel("Resp. to light stimuli"); plt.ylabel("Resp. to dark stimuli"); plt.title(f"\u03C1: {round(pr, 2)}") 
+        plt.xlabel("Resp. to light stimuli"); plt.ylabel("Resp. to dark stimuli"); plt.title(f"$r^2$: {round(r2,2)}, \u03C1: {round(pr, 2)}") 
         vis.savefig(f"idx={s}.png", folders=folders)
         dic[s] = [pr, mse, r2]
 nav.pklsave(dic, "/src", "results", *folders, "fit_metrics.pkl")
