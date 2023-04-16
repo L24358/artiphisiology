@@ -2,12 +2,15 @@ import torch
 import torch.nn as nn
 import numpy as np
 import handytools.navigator as nav
+# from .resnet import ResNet
 
 def get_parameters(name):
     if name == "alexnet":
         net = torch.hub.load('pytorch/vision:v0.10.0', 'alexnet', pretrained=True)
     elif name == "vgg16":
         net = torch.hub.load('pytorch/vision:v0.10.0', 'vgg11', pretrained=True)
+    elif name == "resnet18":
+        net = torch.hub.load('pytorch/vision:v0.10.0', 'resnet18', pretrained=True)
     else:
         raise ValueError(f"`name` cannot be {name}.")
     params = {name: parameter for name, parameter in net.named_parameters()}
@@ -24,6 +27,12 @@ def get_vgg16(hidden_keys=[]):
     model = VGG16(hidden_keys=hidden_keys)
     model.load_state_dict(params)
     return model
+
+# def get_resnet18(hidden_keys=[]):
+#     params = nav.pklload("/src", "data", "models", "resnet18_parameters.pkl")
+#     model = ResNet(hidden_keys=hidden_keys)
+#     model.load_state_dict(params)
+#     return model
 
 class VGG16(nn.Module):
     def __init__(

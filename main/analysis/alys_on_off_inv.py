@@ -1,4 +1,5 @@
 import sys
+import warnings
 import numpy as np
 import matplotlib.pyplot as plt
 import handytools.navigator as nav
@@ -10,17 +11,23 @@ from spectools.metrics.metrics import MSE, R2
 # argv
 argv_dic = man.argv_to_dic(sys.argv)
 
+# hyperparameters
 mtype = man.argv_manager(argv_dic, 1, "AN")
 hidden_key = man.argv_manager(argv_dic, 2, 8, tpe=int)
 hollow = False
 linewidth = 1
-data_type = "rotated"
 scale = 1
+preprocess = man.argv_manager(argv_dic, 3, 2, tpe=int)
 
-R_light = nav.npload("/src", "results", f"responses_{data_type}_hollow={int(hollow)}_lw={linewidth}_light=1_scale={scale}", f"{mtype}_CR_stim=shape_key={hidden_key}.npy")
-R_dark = nav.npload("/src", "results", f"responses_{data_type}_hollow={int(hollow)}_lw={linewidth}_light=0_scale={scale}", f"{mtype}_CR_stim=shape_key={hidden_key}.npy")
-folders = [f"{mtype}_onoff_{data_type}_key={hidden_key}_lw={linewidth}"]
+# catch warnings
+warnings.filterwarnings("ignore")
 
+# load data
+R_light = nav.npload("/src", "results", f"responses_{mtype}", f"key={hidden_key}_hollow=0_scale={scale}_light=1_lw={linewidth}_preproc={preprocess}.npy")
+R_dark = nav.npload("/src", "results", "/src", "results", f"responses_{mtype}", f"key={hidden_key}_hollow=0_scale={scale}_light=0_lw={linewidth}_preproc={preprocess}.npy")
+folders = [f"onoff_{mtype}", f"key={hidden_key}_preproc={preprocess}"]
+
+# analysis
 dic = {}
 for s in range(len(R_light)):
     pr = pearsonr(R_light[s], R_dark[s])[0]
@@ -35,4 +42,4 @@ for s in range(len(R_light)):
         plt.xlabel("Resp. to light stimuli"); plt.ylabel("Resp. to dark stimuli"); plt.title(f"\u03C1: {round(pr, 2)}") 
         vis.savefig(f"idx={s}.png", folders=folders)
         dic[s] = [pr, mse, r2]
-nav.pklsave(dic, "/src", "results", folders[0], "fit_metrics.pkl")
+nav.pklsave(dic, "/src", "results", *folders, "fit_metrics.pkl")
