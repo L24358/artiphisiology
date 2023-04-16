@@ -17,8 +17,8 @@ hidden_key = man.argv_manager(argv_dic, 2, 3, tpe=int)
 scale = 1
 light = True
 linewidth = 1
-preprocess = 2
-print(f"Begin processing: Fill-outline invariance analysis, for network={mtype}, key={hidden_key}.")
+preprocess = man.argv_manager(argv_dic, 3, 2, tpe=int)
+print(f"Begin processing: Fill-outline invariance analysis, for network={mtype}, key={hidden_key}, preprocess={preprocess}.")
 
 # load data
 R_fill = nav.npload("/src", "results", f"responses_{mtype}", f"key={hidden_key}_hollow=0_scale={scale}_light={int(light)}_lw={linewidth}_preproc={preprocess}.npy")

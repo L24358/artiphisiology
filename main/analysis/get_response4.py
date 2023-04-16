@@ -38,7 +38,7 @@ for s in range(51): # there are 51 base shapes
 
         # preprocess image value
         preproc_dic = {1: bcs.preprocess1, 2: bcs.preprocess2}
-        out_array = preproc_dic[preprocess](image_array, light, scale)
+        image_array = preproc_dic[preprocess](image_array, light, scale)
 
         # preprocess image dimension
         image_array = np.swapaxes(image_array, 0, -1)

@@ -22,8 +22,8 @@ def get_center_response(responses):
     
 def preprocess1(image_array, light, scale):
     """Conforms with the preprocessing steps documented in torch hub."""
-    means = [0.485, 0.456, 0.406]
-    stds = [0.229, 0.224, 0.225]
+    means = np.array([0.485, 0.456, 0.406])
+    stds = np.array([0.229, 0.224, 0.225])
 
     image_array = image_array/255. # so that it is within the range [0, 1]
     out_array = (image_array - means)/stds
