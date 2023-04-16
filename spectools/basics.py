@@ -39,3 +39,10 @@ def preprocess2(image_array, light, scale):
     if not light: image_array *= -1 # light BG (0), dark image (-1)
     image_array *= scale
     return image_array
+
+def infer_nunits(n):
+    l = [2**i for i in range(12)]
+    d = abs(n-np.array(l))
+    idx = list(d).index(min(d))
+    if 2**idx > n: return 2**idx
+    else: return 2**(idx+1)
