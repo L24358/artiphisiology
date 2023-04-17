@@ -27,7 +27,7 @@ warnings.filterwarnings("ignore")
 # load data
 R_baseline = nav.npload("/src", "results", f"responses_{mtype}", f"key={hidden_key}_hollow={int(hollow)}_scale=1_light={int(light)}_lw={linewidth}_preproc={preprocess}.npy")
 R_scaled = nav.npload("/src", "results", "/src", "results", f"responses_{mtype}", f"key={hidden_key}_hollow={int(hollow)}_scale={scale}_light={int(light)}_lw={linewidth}_preproc={preprocess}.npy")
-folders = [f"range_{mtype}", f"key={hidden_key}_preproc={preprocess}"]
+folders = [f"DRI_{mtype}", f"key={hidden_key}_preproc={preprocess}"]
 
 # analysis
 dic = {}

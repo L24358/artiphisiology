@@ -27,7 +27,7 @@ warnings.filterwarnings("ignore")
 # load data
 R_light = nav.npload("/src", "results", f"responses_{mtype}", f"key={hidden_key}_hollow=0_scale={scale}_light=1_lw={linewidth}_preproc={preprocess}.npy")
 R_dark = nav.npload("/src", "results", "/src", "results", f"responses_{mtype}", f"key={hidden_key}_hollow=0_scale={scale}_light=0_lw={linewidth}_preproc={preprocess}.npy")
-folders = [f"onoff_{mtype}", f"key={hidden_key}_preproc={preprocess}"]
+folders = [f"OOI_{mtype}", f"key={hidden_key}_preproc={preprocess}"]
 
 # analysis
 dic = {}

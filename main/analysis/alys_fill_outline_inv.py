@@ -23,7 +23,7 @@ print(f"Begin processing: Fill-outline invariance analysis, for network={mtype},
 # load data
 R_fill = nav.npload("/src", "results", f"responses_{mtype}", f"key={hidden_key}_hollow=0_scale={scale}_light={int(light)}_lw={linewidth}_preproc={preprocess}.npy")
 R_holl = nav.npload("/src", "results", f"responses_{mtype}", f"key={hidden_key}_hollow=1_scale={scale}_light={int(light)}_lw={linewidth}_preproc={preprocess}.npy")
-folders = [f"filloutline_{mtype}", f"key={hidden_key}_preproc={preprocess}"]
+folders = [f"FOI_{mtype}", f"key={hidden_key}_preproc={preprocess}"]
 
 # catch warnings
 warnings.filterwarnings("ignore")

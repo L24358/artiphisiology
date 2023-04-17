@@ -76,6 +76,7 @@ What is the minimum circuitry for DRI?
     --> Find the layer that starts becoming not DRI.
     --> Check if that layer has opposite slopes for ReLU.
     --> Check if the scaled input falls into the "cut-off" regions, and yields the bias.
+--> Made out of DRI units from earlier layer, perform deconv to see what they do
     
 What is the minimum circuitry for OOI?
 --> Having two units with opposite polarity but same response.
