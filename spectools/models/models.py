@@ -34,33 +34,58 @@ def get_vgg16(hidden_keys=[]):
 #     model.load_state_dict(params)
 #     return model
 
+class Storage():
+    """
+    Quick patch -- essentially contains 2 dicts,
+        self.info contains the main information (hidden layer output)
+        self.appendix contains extra information (maxpool2didx)
+    This is written this way because a lot of my code already calls expecting it to be a dict with no sub-dicts within.
+    """
+    def __init__(self):
+        self.info = {}
+        self.appendix = {}
+
+    def __getitem__(self, key):
+        return self.info[key]
+    
+    def get_more(self, key, target):
+        return self.appendix[key][target]
+
+    def add_key(self, key):
+        if key not in self.info.keys():
+            self.info[key] = []
+            self.appendix[key] = {}
+
+    def add_target(self, key, target):
+        self.add_key(key)
+        if target not in self.appendix[key].keys(): self.appendix[key][target] = []
+
 class VGG16(nn.Module):
     def __init__(
-        self, hidden_keys: list = [], num_classes: int = 1000, init_weights: bool = True, dropout: float = 0.5
-    ) -> None:
+        self, hidden_keys: list = [], num_classes: int = 1000, init_weights: bool = True, dropout: float = 0.5,) -> None:
         super().__init__()
         self.features = nn.Sequential(
             nn.Conv2d(3, 64, kernel_size=3, stride=1, padding=1),
             nn.ReLU(inplace=True),
-            nn.MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False),
+            nn.MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False, return_indices=True),
             nn.Conv2d(64, 128, kernel_size=3, stride=1, padding=1),
             nn.ReLU(inplace=True),
-            nn.MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False),
+            nn.MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False, return_indices=True),
             nn.Conv2d(128, 256, kernel_size=3, stride=1, padding=1),
             nn.ReLU(inplace=True),
             nn.Conv2d(256, 256, kernel_size=3, stride=1, padding=1),
             nn.ReLU(inplace=True),
-            nn.MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False),
+            nn.MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False, return_indices=True),
             nn.Conv2d(256, 512, kernel_size=3, stride=1, padding=1),
             nn.ReLU(inplace=True),
             nn.Conv2d(512, 512, kernel_size=3, stride=1, padding=1),
             nn.ReLU(inplace=True),
-            nn.MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False),
+            nn.MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False, return_indices=True),
             nn.Conv2d(512, 512, kernel_size=3, stride=1, padding=1),
             nn.ReLU(inplace=True),
             nn.Conv2d(512, 512, kernel_size=3, stride=1, padding=1),
             nn.ReLU(inplace=True),
-            nn.MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False),
+            nn.MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False, return_indices=True),
         )
         self.avgpool = nn.AdaptiveAvgPool2d((7, 7))
         self.classifier = nn.Sequential(
@@ -86,7 +111,7 @@ class VGG16(nn.Module):
                     nn.init.constant_(m.bias, 0)
 
         # initialize hidden info
-        self.hidden_info = {}
+        self.hidden_info = Storage()
         self.update_hidden_keys(hidden_keys)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
@@ -94,8 +119,14 @@ class VGG16(nn.Module):
 
         # features
         for i, child in enumerate(list(self.features.children())):
-            x = child(x)
-            if i in self.hidden_keys: self.hidden_info[i].append(x)
+            if not isinstance(child, nn.MaxPool2d): 
+                x = child(x)
+            else:
+                x, maxpoolidx = child(x)
+
+            if i in self.hidden_keys:
+                self.hidden_info[i].append(x)
+                self.hidden_info.get_more(i, "maxpool2d_idx").append(maxpoolidx)
 
         # avg pooling and flatten
         x = self.avgpool(x)
@@ -109,10 +140,9 @@ class VGG16(nn.Module):
         return x
 
     def update_hidden_keys(self, keys):
-        dic = {}
         self.hidden_keys = keys
-        for key in self.hidden_keys: dic[key] = []
-        self.hidden_info = {**dic, **self.hidden_info} # update, with priority given to existing self.hidden_info
+        for key in keys:
+            self.hidden_info.add_target(key, "maxpool2d_idx")
 
 class AlexNet(nn.Module):
     def __init__(self, num_classes=1000, hidden_keys=[]):

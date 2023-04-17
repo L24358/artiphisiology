@@ -8,50 +8,40 @@ from .models import get_vgg16
 class VGG16_deconv(torch.nn.Module):
     def __init__(self):
         super(VGG16_deconv, self).__init__()
-        self.conv2DeconvIdx = {0:17, 2:16, 5:14, 7:13, 10:11, 12:10, 14:9, 17:7, 19:6, 21:5, 24:3, 26:2, 28:1}
-        self.conv2DeconvBiasIdx = {0:16, 2:14, 5:13, 7:11, 10:10, 12:9, 14:7, 17:6, 19:5, 21:3, 24:2, 26:1, 28:0}
-        self.unpool2PoolIdx = {15:4, 12:9, 8:16, 4:23, 0:30}
+        self.conv2DeconvIdx = {0:12, 3:10, 6:8, 8:7, 11:5, 13:4, 16:2, 18:1}
+        self.conv2DeconvBiasIdx = {0:11, 3:9, 6:7, 8:6, 11:4, 13:3, 16:1, 18:0}
+        self.unpool2PoolIdx = {11:2, 9:5, 6:10, 3:15, 0:20}
 
         self.deconv_features = torch.nn.Sequential(
             torch.nn.MaxUnpool2d(2, stride=2),
             torch.nn.ConvTranspose2d(512, 512, 3, padding=1),
             torch.nn.ConvTranspose2d(512, 512, 3, padding=1),
-            torch.nn.ConvTranspose2d(512, 512, 3, padding=1),
             torch.nn.MaxUnpool2d(2, stride=2),
-            torch.nn.ConvTranspose2d(512, 512, 3, padding=1),
             torch.nn.ConvTranspose2d(512, 512, 3, padding=1),
             torch.nn.ConvTranspose2d(512, 256, 3, padding=1),
             torch.nn.MaxUnpool2d(2, stride=2),
             torch.nn.ConvTranspose2d(256, 256, 3, padding=1),
-            torch.nn.ConvTranspose2d(256, 256, 3, padding=1),
             torch.nn.ConvTranspose2d(256, 128, 3, padding=1),
             torch.nn.MaxUnpool2d(2, stride=2),
-            torch.nn.ConvTranspose2d(128, 128, 3, padding=1),
             torch.nn.ConvTranspose2d(128, 64, 3, padding=1),
             torch.nn.MaxUnpool2d(2, stride=2),
-            torch.nn.ConvTranspose2d(64, 64, 3, padding=1),
-            torch.nn.ConvTranspose2d(64, 3, 3, padding=1)
+            torch.nn.ConvTranspose2d(64, 3, 3, padding=1),
         )
 
         self.deconv_first_layers = torch.nn.ModuleList([
             torch.nn.MaxUnpool2d(2, stride=2),
-            torch.nn.ConvTranspose2d(1, 512, 3, padding=1),
-            torch.nn.ConvTranspose2d(1, 512, 3, padding=1),
-            torch.nn.ConvTranspose2d(1, 512, 3, padding=1),
+            torch.nn.ConvTranspose2d(512, 512, 3, padding=1),
+            torch.nn.ConvTranspose2d(512, 512, 3, padding=1),
             torch.nn.MaxUnpool2d(2, stride=2),
-            torch.nn.ConvTranspose2d(1, 512, 3, padding=1),
-            torch.nn.ConvTranspose2d(1, 512, 3, padding=1),
-            torch.nn.ConvTranspose2d(1, 256, 3, padding=1),
+            torch.nn.ConvTranspose2d(512, 512, 3, padding=1),
+            torch.nn.ConvTranspose2d(512, 256, 3, padding=1),
             torch.nn.MaxUnpool2d(2, stride=2),
-            torch.nn.ConvTranspose2d(1, 256, 3, padding=1),
-            torch.nn.ConvTranspose2d(1, 256, 3, padding=1),
-            torch.nn.ConvTranspose2d(1, 128, 3, padding=1),
+            torch.nn.ConvTranspose2d(256, 256, 3, padding=1),
+            torch.nn.ConvTranspose2d(256, 128, 3, padding=1),
             torch.nn.MaxUnpool2d(2, stride=2),
-            torch.nn.ConvTranspose2d(1, 128, 3, padding=1),
-            torch.nn.ConvTranspose2d(1, 64, 3, padding=1),
+            torch.nn.ConvTranspose2d(128, 64, 3, padding=1),
             torch.nn.MaxUnpool2d(2, stride=2),
-            torch.nn.ConvTranspose2d(1, 64, 3, padding=1),
-            torch.nn.ConvTranspose2d(1, 3, 3, padding=1)]
+            torch.nn.ConvTranspose2d(64, 3, 3, padding=1)]
         )
 
         self._initialize_weights()
@@ -62,10 +52,9 @@ class VGG16_deconv(torch.nn.Module):
         for i, layer in enumerate(vgg16_pretrained.features):
             if isinstance(layer, torch.nn.Conv2d):
                 self.deconv_features[self.conv2DeconvIdx[i]].weight.data = layer.weight.data
-            
-            biasIdx = self.conv2DeconvBiasIdx[i]
-            if biasIdx > 0:
-                self.deconv_features[biasIdx].bias.data = layer.bias.data
+                biasIdx = self.conv2DeconvIdx[i] ## ORIGINALLY 2BIAS
+                if biasIdx > 0:
+                    self.deconv_features[biasIdx].bias.data = layer.bias.data
     
     def forward(self, x, layer_number, map_number, pool_indices):
         # must start with a conv2d layer
@@ -82,7 +71,7 @@ class VGG16_deconv(torch.nn.Module):
         output = self.deconv_first_layers[start_idx](x)
 
         # transpose conv through the rest of the network
-        # pool_indices: the pool indices that are > layer_number (this is a guess)
+        # pool_indices: the pool indices that are returned by MaxPool2d
         for i in range(start_idx+1, len(self.deconv_features)):
             if isinstance(self.deconv_features[i], torch.nn.MaxUnpool2d):
                 output = self.deconv_features[i](output, pool_indices[self.unpool2PoolIdx[i]])
