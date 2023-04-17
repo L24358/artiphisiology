@@ -28,37 +28,12 @@ def get_vgg16(hidden_keys=[]):
     model.load_state_dict(params)
     return model
 
-# def get_resnet18(hidden_keys=[]):
-#     params = nav.pklload("/src", "data", "models", "resnet18_parameters.pkl")
-#     model = ResNet(hidden_keys=hidden_keys)
-#     model.load_state_dict(params)
-#     return model
-
-class Storage():
-    """
-    Quick patch -- essentially contains 2 dicts,
-        self.info contains the main information (hidden layer output)
-        self.appendix contains extra information (maxpool2didx)
-    This is written this way because a lot of my code already calls expecting it to be a dict with no sub-dicts within.
-    """
-    def __init__(self):
-        self.info = {}
-        self.appendix = {}
-
-    def __getitem__(self, key):
-        return self.info[key]
-    
-    def get_more(self, key, target):
-        return self.appendix[key][target]
-
-    def add_key(self, key):
-        if key not in self.info.keys():
-            self.info[key] = []
-            self.appendix[key] = {}
-
-    def add_target(self, key, target):
-        self.add_key(key)
-        if target not in self.appendix[key].keys(): self.appendix[key][target] = []
+def get_resnet18(hidden_keys=[]):
+    return None
+    params = nav.pklload("/src", "data", "models", "resnet18_parameters.pkl")
+    model = ResNet(hidden_keys=hidden_keys)
+    model.load_state_dict(params)
+    return model
 
 class VGG16(nn.Module):
     def __init__(
@@ -76,7 +51,7 @@ class VGG16(nn.Module):
             nn.Conv2d(256, 256, kernel_size=3, stride=1, padding=1),
             nn.ReLU(inplace=True),
             nn.MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False, return_indices=True),
-            nn.Conv2d(256, 512, kernel_size=3, stride=1, padding=1),
+            nn.Conv2d(256, 512, kernel_size=3, stride=1, padding=1), # layer 11
             nn.ReLU(inplace=True),
             nn.Conv2d(512, 512, kernel_size=3, stride=1, padding=1),
             nn.ReLU(inplace=True),
@@ -111,10 +86,10 @@ class VGG16(nn.Module):
                     nn.init.constant_(m.bias, 0)
 
         # initialize hidden info
-        self.hidden_info = Storage()
-        self.update_hidden_keys(hidden_keys)
+        self.hidden_keys = hidden_keys
+        self.reset_storage()
 
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
+    def forward(self, x: torch.Tensor, premature_quit=False) -> torch.Tensor:
         x = x.float()
 
         # features
@@ -123,11 +98,13 @@ class VGG16(nn.Module):
                 x = child(x)
             else:
                 x, maxpoolidx = child(x)
+                self.pool_indices[i].append(maxpoolidx)
 
             if i in self.hidden_keys:
                 self.hidden_info[i].append(x)
-                self.hidden_info.get_more(i, "maxpool2d_idx").append(maxpoolidx)
-
+                if premature_quit: return None
+            self.output_size[i].append(x.shape)
+                
         # avg pooling and flatten
         x = self.avgpool(x)
         if i+1 in self.hidden_keys: self.hidden_info[i+1].append(x) # layer i+1
@@ -139,10 +116,19 @@ class VGG16(nn.Module):
             if (i+1)+(j+1) in self.hidden_keys: self.hidden_info[i+j+2].append(x) # starts from layer i+2=(i+1)+(j+1) because j=0
         return x
 
-    def update_hidden_keys(self, keys):
-        self.hidden_keys = keys
-        for key in keys:
-            self.hidden_info.add_target(key, "maxpool2d_idx")
+    def update_hidden_keys(self):
+        dic = {}
+        for key in self.hidden_keys: dic[key] = []
+        self.hidden_info = {**dic, **self.hidden_info} # update, with priority given to existing self.hidden_info
+
+    def reset_storage(self):
+        self.hidden_info = {}
+        self.update_hidden_keys()
+        self.pool_indices = {}
+        for layer in [2, 5, 10, 15, 20]: self.pool_indices[layer] = []
+        self.output_size = {}
+        for layer in range(21): self.output_size[layer] = []
+
 
 class AlexNet(nn.Module):
     def __init__(self, num_classes=1000, hidden_keys=[]):
