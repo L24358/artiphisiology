@@ -1,3 +1,23 @@
+### 20230417 ###
+Random Thoughts:
+
+Can I draw a contribution graph?
+
+What is the minimum circuitry for DRI?
+--> Having a tanh function should acheive that. (There is no tanh)
+--> All contributing units should have response values that are at \pm 1.
+    --> If previous units are already DRI: trace upwards
+    --> If not: check if they saturate
+--> ReLU requires two layers to mimic tanh (one to cut from below, one from above)
+    --> Find the layer that starts becoming not DRI.
+    --> Check if that layer has opposite slopes for ReLU.
+    --> Check if the scaled input falls into the "cut-off" regions, and yields the bias.
+--> Made out of DRI units from earlier layer, perform deconv to see what they do
+    
+What is the minimum circuitry for OOI?
+--> Having two units with opposite polarity but same response.
+--> OOI can also be implemented via the mechanism above for DRI.
+
 ### TTD 041223 ###
 1. Think carefully about the metrics, run it on computer and upload it to github.
 

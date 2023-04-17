@@ -1,5 +1,6 @@
+import torch
 import numpy as np
-from handytools.catcher import AlgorithmError
+from handytools.catcher import AlgorithmError, InputError
 
 def get_centroid(image_array, tot_pxl):
     coors = []
@@ -13,7 +14,7 @@ def get_centroid(image_array, tot_pxl):
 def get_center_response(responses):
     if len(responses.shape) == 4: 
         B, C, H, W = responses.shape
-        return responses[:, :, H // 2, W //2].squeeze().detach().numpy().swapaxes(0, 1) # shape = (C, B)
+        return responses[:, :, H // 2, W //2].detach().numpy().swapaxes(0, 1) # shape = (C, B) # .squeeze(axis=(2,3))
     elif len(responses.shape) == 2:
         B, C = responses.shape
         return responses.detach().numpy().T # shape = (C, B)
@@ -40,9 +41,26 @@ def preprocess2(image_array, light, scale):
     image_array *= scale
     return image_array
 
+def preprocess3(image_array):
+    """Reshapes dimension of image_array."""
+    image_array = np.swapaxes(image_array, 0, -1)
+    image_array = np.swapaxes(image_array, 1, 2)[:3, :, :] # shape = (3, 227, 227)
+    image_array = np.expand_dims(image_array, 0)
+    return image_array
+
 def infer_nunits(n):
     l = [2**i for i in range(12)]
     d = abs(n-np.array(l))
     idx = list(d).index(min(d))
     if 2**idx > n: return 2**idx
     else: return 2**(idx+1)
+
+def set_to_zero(model, target, id1, id2):
+    flag = True
+    for name, param in model.named_parameters():
+        if name == target:
+            param_clone = param.clone()
+            param_clone[id1][id2] = torch.zeros(param_clone[id1][id2].shape)
+            param.data = param_clone
+            flag = False
+    if flag: raise InputError(f"{target} is not found in model.named_parameters().")
