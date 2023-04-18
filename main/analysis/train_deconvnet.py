@@ -19,12 +19,13 @@ train_dataloader = DataLoader(dataset, batch_size=bs, shuffle=True)
 dmodel = VGG16_deconv()
 optimizer = Adam(dmodel.parameters(), lr=0.001)
 loss_fn = nn.MSELoss()
+output_size = nav.pklload("/src", "data", f"outsize_imagenette_seed={42}_bs={bs}", f"key={key}_unit={unit}.pkl")
 
 # training loop
 dmodel.train()
 
 losses = []
-for epoch in range(2):
+for epoch in range(1):
     # print
     print("Epoch: ", epoch)
 
@@ -32,9 +33,8 @@ for epoch in range(2):
 
         # get single channel output from model
         image, _, _ = data
-        hidden_info = nav.pklsave("/src", "data", f"hresp_imagenette_seed={42}_bs={bs}", f"key={key}_unit={unit}_B={i}.pkl")
-        pool_indices = nav.pklsave("/src", "data", f"poolidx_imagenette_seed={42}_bs={bs}", f"key={key}_unit={unit}_B={i}.pkl")
-        output_size = nav.pklsave("/src", "data", f"outsize_imagenette_seed={42}_bs={bs}", f"key={key}_unit={unit}_B={i}.pkl")
+        hidden_info = nav.pklload("/src", "data", f"hresp_imagenette_seed={42}_bs={bs}", f"key={key}_unit={unit}_B={i}.pkl")
+        pool_indices = nav.pklload("/src", "data", f"poolidx_imagenette_seed={42}_bs={bs}", f"key={key}_unit={unit}_B={i}.pkl")
         R = hidden_info[key][0] # select single channel
 
         # pass input into deconv model
