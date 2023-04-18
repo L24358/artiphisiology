@@ -1,3 +1,4 @@
+import torch
 import torch.nn as nn
 import handytools.navigator as nav
 from torch.utils.data import DataLoader
@@ -10,6 +11,7 @@ from spectools.stimulus.dataloader import Imagenette
 key = 11
 unit = 435
 bs = 128
+torch.manual_seed(42)
 
 # define model, loss func, optimizer
 dataset = Imagenette()
