@@ -18,7 +18,7 @@ argv_dic = man.argv_to_dic(sys.argv)
 mtype = man.argv_manager(argv_dic, 1, "VGG16")
 hidden_key = man.argv_manager(argv_dic, 2, 22, tpe=int)
 hollow = man.argv_manager(argv_dic, 3, True, tpe=man.bool_int)
-scale = man.argv_manager(argv_dic, 4, 1, tpe=int)
+scale = man.argv_manager(argv_dic, 4, 1, tpe=float) # int
 light = man.argv_manager(argv_dic, 5, True, tpe=man.bool_int)
 linewidth = man.argv_manager(argv_dic, 6, 1, tpe=int)
 preprocess = man.argv_manager(argv_dic, 7, 2, tpe=int)

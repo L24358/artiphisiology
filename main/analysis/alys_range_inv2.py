@@ -17,9 +17,9 @@ hidden_key = man.argv_manager(argv_dic, 2, 8, tpe=int)
 hollow = False
 linewidth = 1
 light = True
-scale = 2
+scale = man.argv_manager(argv_dic, 4, 2, tpe=float)
 preprocess = man.argv_manager(argv_dic, 3, 2, tpe=int)
-print(f"Begin processing: Fill-outline invariance analysis, for network={mtype}, key={hidden_key}, preprocess={preprocess}.")
+print(f"Begin processing: Fill-outline invariance analysis, for network={mtype}, key={hidden_key}, preprocess={preprocess}, scale={scale}.")
 
 # catch warnings
 warnings.filterwarnings("ignore")
@@ -27,7 +27,7 @@ warnings.filterwarnings("ignore")
 # load data
 R_baseline = nav.npload("/src", "results", f"responses_{mtype}", f"key={hidden_key}_hollow={int(hollow)}_scale=1_light={int(light)}_lw={linewidth}_preproc={preprocess}.npy")
 R_scaled = nav.npload("/src", "results", "/src", "results", f"responses_{mtype}", f"key={hidden_key}_hollow={int(hollow)}_scale={scale}_light={int(light)}_lw={linewidth}_preproc={preprocess}.npy")
-folders = [f"DRI_{mtype}", f"key={hidden_key}_preproc={preprocess}"]
+folders = [f"DRI_{mtype}_scale={scale}", f"key={hidden_key}_preproc={preprocess}"]
 
 # analysis
 dic = {}

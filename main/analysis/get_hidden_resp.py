@@ -23,12 +23,13 @@ start, end, flag_output = 0, 100, True
 model.eval()
 for i, data in enumerate(train_dataloader):
 
+    print(i)
     if i >= start:
         # get input, reset optimizer
         image, label, img_idx = data
         model(image, premature_quit = True, filt = lambda x: x[:, unit:unit+1, ...]) # feed image into model
 
-        # nav.pklsave(model.hidden_info, "/src", "data", f"hresp_imagenette_seed={42}_bs={bs}", f"key={key}_unit={unit}_B={i}.pkl")
+        nav.pklsave(model.hidden_info, "/src", "data", f"hresp_imagenette_seed={42}_bs={bs}", f"key={key}_unit={unit}_B={i}.pkl")
         nav.pklsave(model.pool_indices, "/src", "data", f"poolidx_imagenette_seed={42}_bs={bs}", f"key={key}_unit={unit}_B={i}.pkl")
         if flag_output: 
             nav.pklsave(model.output_size, "/src", "data", f"outsize_imagenette_seed={42}_bs={bs}", f"key={key}_unit={unit}.pkl")
