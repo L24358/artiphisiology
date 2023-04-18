@@ -88,6 +88,7 @@ class VGG16(nn.Module):
         # initialize hidden info
         self.hidden_keys = hidden_keys
         self.reset_storage()
+        self.flag_output = True
 
     def forward(self, x: torch.Tensor, premature_quit=False, filt=lambda x:x) -> torch.Tensor:
         x = x.float()
@@ -96,14 +97,20 @@ class VGG16(nn.Module):
         for i, child in enumerate(list(self.features.children())):
             if not isinstance(child, nn.MaxPool2d): 
                 x = child(x)
-            else:
+            else: # for Maxpool layers
                 x, maxpoolidx = child(x)
                 self.pool_indices[i].append(maxpoolidx)
 
             if i in self.hidden_keys:
                 self.hidden_info[i].append(filt(x))
-                if premature_quit: return None
-            self.output_size[i].append(x.shape)
+
+                if premature_quit:
+                    self.flag_output = False # only need to append once
+                    return None
+            
+            if self.flag_output:
+                self.output_size[i].append(x.shape)
+        self.flag_output = False # only need to append once
                 
         # avg pooling and flatten
         x = self.avgpool(x)

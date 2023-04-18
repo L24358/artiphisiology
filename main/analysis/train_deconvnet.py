@@ -1,4 +1,5 @@
 import torch.nn as nn
+import handytools.navigator as nav
 from torch.utils.data import DataLoader
 from torch.optim import Adam
 from spectools.models.models import get_vgg16
@@ -8,14 +9,12 @@ from spectools.stimulus.dataloader import Imagenette
 # hyperparameters
 key = 11
 unit = 435
+bs = 128
 
-# define dataset, models
+# define model, loss func, optimizer
 dataset = Imagenette()
-train_dataloader = DataLoader(dataset, batch_size=64, shuffle=False)
-model = get_vgg16(hidden_keys=[key])
+train_dataloader = DataLoader(dataset, batch_size=bs, shuffle=True)
 dmodel = VGG16_deconv()
-
-# define loss function, optimizer
 optimizer = Adam(dmodel.parameters(), lr=0.001)
 loss_fn = nn.MSELoss()
 
@@ -28,19 +27,16 @@ for epoch in range(2):
     print("Epoch: ", epoch)
 
     for i, data in enumerate(train_dataloader):
-        # get input, reset optimizer
-        image, label = data
-        optimizer.zero_grad()
 
-        ## TODO: the results of this part can be saved!
         # get single channel output from model
-        model(image, premature_quit = True) # feed image into model
-        R = model.hidden_info[key][0][:, unit:unit+1, ...] # select single channel
-        pool_indices = model.pool_indices
-        output_size = model.output_size
-        model.reset_storage()
+        image, _, _ = data
+        hidden_info = nav.pklsave("/src", "data", f"hresp_imagenette_seed={42}_bs={bs}", f"key={key}_unit={unit}_B={i}.pkl")
+        pool_indices = nav.pklsave("/src", "data", f"poolidx_imagenette_seed={42}_bs={bs}", f"key={key}_unit={unit}_B={i}.pkl")
+        output_size = nav.pklsave("/src", "data", f"outsize_imagenette_seed={42}_bs={bs}", f"key={key}_unit={unit}_B={i}.pkl")
+        R = hidden_info[key][0] # select single channel
 
         # pass input into deconv model
+        optimizer.zero_grad()
         image_pred = dmodel(R, key, unit, pool_indices, output_size)
 
         # calculate loss and step
