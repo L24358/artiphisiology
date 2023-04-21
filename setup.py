@@ -10,7 +10,7 @@ setup(
 )
 
 setup(
-    name="spectools",
+    name="handytools",
     version="0.0.0",
     author="Belle Liu",
     author_email="belle.l24358@gmail.com",
@@ -19,7 +19,7 @@ setup(
 )
 
 setup(
-    name="handytools",
+    name="spectools",
     version="0.0.0",
     author="Belle Liu",
     author_email="belle.l24358@gmail.com",
