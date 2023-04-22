@@ -1,3 +1,7 @@
+"""
+Filter responses according to sparsity constraint.
+"""
+
 import numpy as np
 import handytools.navigator as nav
 from spectools.metrics.metrics import response_sparsity
@@ -10,8 +14,8 @@ response_folders = nav.list_dir("/src/data/", constraint)
 
 Rs = []
 for folder in response_folders:
-    R = nav.npload("/src/data/", folder, "CR_stim=shape_key=8.npy")
+    R = nav.npload(nav.datapath, folder, "CR_stim=shape_key=8.npy")
     Rs.append(R)
 Rs = np.hstack(Rs)
 _, idx = response_sparsity(Rs)
-nav.npsave(idx, "/src", "data", "responses", "sparse_idx.npy")
+nav.npsave(idx, nav.datapath, "responses", "sparse_idx.npy")

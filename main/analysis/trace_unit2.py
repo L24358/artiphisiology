@@ -1,8 +1,8 @@
 """
-Feeding one single image suits deconvolved image most, not rotating image.
-For rotating image, should use an average. This one uses average.
+Obtain leave-one-out responses from the network by averaging over responses.
 
-KILLED for no apparant reason.
+@ TODO:
+    - Not completed. Killed.
 """
 
 import gc
@@ -21,10 +21,10 @@ hkey = 11 # CAUTION: Setting hkey does not adjust the previous layer nunit!
 
 # load data
 model = mdl.get_vgg16(hidden_keys=[11])
-R_ori = nav.npload("/src", "results", f"responses_VGG16", f"key={hkey}_hollow=0_scale=1_light=1_lw=1_preproc=2.npy")
-rot_info = nav.pklload("/src", "data", "stimulus", "shape_info.pkl")["rotation"]
-rot_idx = nav.pklload("/src", "data", "stimulus", "shape_index.pkl")
-image_array = nav.npload("/src", "data", "stimulus", f"stacked_rotated_hollow=0_lw=1_light=1_scale=1_preproc=2.npy")
+R_ori = nav.npload(nav.homepath, "results", f"responses_VGG16", f"key={hkey}_hollow=0_scale=1_light=1_lw=1_preproc=2.npy")
+rot_info = nav.pklload(nav.datapath, "stimulus", "shape_info.pkl")["rotation"]
+rot_idx = nav.pklload(nav.datapath, "stimulus", "shape_index.pkl")
+image_array = nav.npload(nav.datapath, "stimulus", f"stacked_rotated_hollow=0_lw=1_light=1_scale=1_preproc=2.npy")
 image_array = torch.from_numpy(image_array)
 
 # loop over previous layer (layer 8)
@@ -41,4 +41,4 @@ for n in range(256): # CAUTION: Setting hkey does not adjust this!
 
     R_modify = Rc[unit]
     diff.append(R_modify - R_ori[unit])
-    nav.npsave(diff, "/src", "results", "subtraction_VGG16", f"mean_unit={unit}_key={hkey}_preunit={n}.npy")
+    nav.npsave(diff, nav.homepath, "results", "subtraction_VGG16", f"mean_unit={unit}_key={hkey}_preunit={n}.npy")

@@ -1,3 +1,7 @@
+"""
+Analyze the degree of Dynamic-Range Invariance (DRI) of a particular layer of a particular network.
+"""
+
 import sys
 import warnings
 import numpy as np
@@ -25,8 +29,8 @@ print(f"Begin processing: Fill-outline invariance analysis, for network={mtype},
 warnings.filterwarnings("ignore")
 
 # load data
-R_baseline = nav.npload("/src", "results", f"responses_{mtype}", f"key={hidden_key}_hollow={int(hollow)}_scale=1_light={int(light)}_lw={linewidth}_preproc={preprocess}.npy")
-R_scaled = nav.npload("/src", "results", "/src", "results", f"responses_{mtype}", f"key={hidden_key}_hollow={int(hollow)}_scale={scale}_light={int(light)}_lw={linewidth}_preproc={preprocess}.npy")
+R_baseline = nav.npload(nav.homepath, "results", f"responses_{mtype}", f"key={hidden_key}_hollow={int(hollow)}_scale=1_light={int(light)}_lw={linewidth}_preproc={preprocess}.npy")
+R_scaled = nav.npload(nav.homepath, "results", "/src", "results", f"responses_{mtype}", f"key={hidden_key}_hollow={int(hollow)}_scale={scale}_light={int(light)}_lw={linewidth}_preproc={preprocess}.npy")
 folders = [f"DRI_{mtype}_scale={scale}", f"key={hidden_key}_preproc={preprocess}"]
 
 # analysis
@@ -44,4 +48,4 @@ for s in range(len(R_baseline)):
         plt.xlabel("Resp. to baseline stimuli"); plt.ylabel(f"Resp. to scaled (s={scale}) stimuli"); plt.title(f"$r^2$: {round(r2,2)}, \u03C1: {round(pr, 2)}") 
         vis.savefig(f"idx={s}.png", folders=folders)
         dic[s] = [pr, mse, r2]
-nav.pklsave(dic, "/src", "results", *folders, "fit_metrics.pkl")
+nav.pklsave(dic, nav.homepath, "results", *folders, "fit_metrics.pkl")

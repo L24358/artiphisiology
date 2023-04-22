@@ -1,3 +1,7 @@
+"""
+Store responses to Imagenette.
+"""
+
 import gc
 import torch
 import torch.nn as nn

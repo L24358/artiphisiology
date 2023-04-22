@@ -1,3 +1,7 @@
+"""
+Analyze degree of fill-outline invariance (FOI) of units in a particular layer of a particular network.
+"""
+
 import sys
 import warnings
 import numpy as np
@@ -21,8 +25,8 @@ preprocess = man.argv_manager(argv_dic, 3, 2, tpe=int)
 print(f"Begin processing: Fill-outline invariance analysis, for network={mtype}, key={hidden_key}, preprocess={preprocess}.")
 
 # load data
-R_fill = nav.npload("/src", "results", f"responses_{mtype}", f"key={hidden_key}_hollow=0_scale={scale}_light={int(light)}_lw={linewidth}_preproc={preprocess}.npy")
-R_holl = nav.npload("/src", "results", f"responses_{mtype}", f"key={hidden_key}_hollow=1_scale={scale}_light={int(light)}_lw={linewidth}_preproc={preprocess}.npy")
+R_fill = nav.npload(nav.homepath, "results", f"responses_{mtype}", f"key={hidden_key}_hollow=0_scale={scale}_light={int(light)}_lw={linewidth}_preproc={preprocess}.npy")
+R_holl = nav.npload(nav.homepath, "results", f"responses_{mtype}", f"key={hidden_key}_hollow=1_scale={scale}_light={int(light)}_lw={linewidth}_preproc={preprocess}.npy")
 folders = [f"FOI_{mtype}", f"key={hidden_key}_preproc={preprocess}"]
 
 # catch warnings
@@ -43,4 +47,4 @@ for s in range(len(R_fill)):
         plt.xlabel("Resp. to filled shapes"); plt.ylabel("Resp. to outlines"); plt.title(f"$r^2$: {round(r2,2)}, \u03C1: {round(pr, 2)}") 
         vis.savefig(f"idx={s}.png", folders=folders)
         dic[s] = [pr, mse, r2]
-nav.pklsave(dic, "/src", "results", *folders, "fit_metrics.pkl")
+nav.pklsave(dic, nav.homepath, "results", *folders, "fit_metrics.pkl")

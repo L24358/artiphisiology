@@ -6,7 +6,7 @@ import handytools.navigator as nav
 
 def get_parameters(name):
     if name == "alexnet":
-        net = torch.hub.load('pytorch/vision:v0.10.0', 'alexnet', weights="AlexNet_Weights.IMAGENET1K_V1")
+        net = torch.hub.load('pytorch/vision:v0.10.0', 'alexnet', pretrained=True) # "AlexNet_Weights.IMAGENET1K_V1"
     elif name == "vgg16":
         net = torch.hub.load('pytorch/vision:v0.10.0', 'vgg11', pretrained=True) # weights="VGG11_Weights.IMAGENET1K_V1"
     elif name == "resnet18":

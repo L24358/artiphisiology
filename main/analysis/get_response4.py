@@ -1,4 +1,6 @@
 """
+Get responses of networks to different images (light, scale, hollow, etc.).
+
 @ Updates:
     - Include option to use image preprocessing step s.t. it conforms with torch hub documentation
 """
@@ -28,13 +30,13 @@ print(f"Begin processing: network={mtype}, key={hidden_key}, hollow={bool(hollow
 if mtype == "AN": mfunc = mdl.get_alexnet
 elif mtype == "VGG16": mfunc = mdl.get_vgg16
 model = mfunc(hidden_keys=[hidden_key])
-rot_info = nav.pklload("/src", "data", "stimulus", "shape_info.pkl")["rotation"]
+rot_info = nav.pklload(nav.datapath, "stimulus", "shape_info.pkl")["rotation"]
 
 # process image
 image_arrays = []
 for s in range(51): # there are 51 base shapes
     for r in range(rot_info[s]):
-        image_array = nav.npload("/src", "data", f"stimulus_rotated_hollow={int(hollow)}_lw={linewidth}", f"idx={s}_pxl=227_r={r}.npy") # shape = (227, 227, 4)
+        image_array = nav.npload(nav.datapath, f"stimulus_rotated_hollow={int(hollow)}_lw={linewidth}", f"idx={s}_pxl=227_r={r}.npy") # shape = (227, 227, 4)
 
         # preprocess image value
         preproc_dic = {1: bcs.preprocess1, 2: bcs.preprocess2}
@@ -51,6 +53,6 @@ X = torch.from_numpy(image_arrays)
 model(X)
 R = model.hidden_info[hidden_key][0] # shape = (51, 256, 13, 13)
 Rc = bcs.get_center_response(R) # shape = (256, 51)
-nav.npsave(Rc, "/src", "results", 
+nav.npsave(Rc, nav.homepath, "results", 
            f"responses_{mtype}",
            f"key={hidden_key}_hollow={int(hollow)}_scale={scale}_light={int(light)}_lw={linewidth}_preproc={preprocess}.npy")

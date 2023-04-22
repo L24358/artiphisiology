@@ -1,6 +1,7 @@
 """
-Add rotation to existing images.
+Plot basic + rotated image shapes.
 """
+
 import numpy as np
 import matplotlib.pyplot as plt
 import spectools.basics as bcs
@@ -16,10 +17,10 @@ linewidth = 1
 
 # load data
 true_center = tot_pxl/2.0
-rot_info = nav.pklload("/src", "data", "stimulus", "shape_info.pkl")["rotation"]
-shape_coor = nav.pklload("/src", "data", "stimulus", "shape_coor.pkl")
-filepath = ["/src", "data", f"stimulus_rotated_hollow={int(hollow)}_lw={linewidth}"]
-nav.mkfile(f"/src/graphs/shapes_rotated_hollow={int(hollow)}_lw={linewidth}/")
+rot_info = nav.pklload(nav.datapath, "stimulus", "shape_info.pkl")["rotation"]
+shape_coor = nav.pklload(nav.datapath, "stimulus", "shape_coor.pkl")
+filepath = [nav.datapath, f"stimulus_rotated_hollow={int(hollow)}_lw={linewidth}"]
+nav.mkfile(nav.graphpath + f"shapes_rotated_hollow={int(hollow)}_lw={linewidth}/")
 
 # hollow or full
 if hollow:
@@ -38,7 +39,7 @@ for s in range(51):
 
         new_image_array = vis.get_shape(ps_rotated, tot_pxl, facecolor=facecolor, edgecolor=edgecolor, linewidth=linewidth, exist_ps=True)[0]
         new_image = vis.get_image(new_image_array)
-        new_image.save(f"/src/graphs/shapes_rotated_hollow={int(hollow)}_lw={linewidth}/idx={s}_pxl={tot_pxl}_r={r}.png")
+        new_image.save(nav.graphpath + f"shapes_rotated_hollow={int(hollow)}_lw={linewidth}/idx={s}_pxl={tot_pxl}_r={r}.png")
         nav.npsave(new_image_array, *filepath, f"idx={s}_pxl={tot_pxl}_r={r}.npy")
 
         plt.close("all")

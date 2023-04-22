@@ -1,3 +1,7 @@
+"""
+Stack the rotated images.
+"""
+
 import sys
 import torch
 import numpy as np
@@ -12,12 +16,12 @@ preprocess = 2
 light = 1
 scale = 1
 
-rot_info = nav.pklload("/src", "data", "stimulus", "shape_info.pkl")["rotation"]
+rot_info = nav.pklload(nav.datapath, "stimulus", "shape_info.pkl")["rotation"]
 
 image_arrays = []
 for s in range(51): # there are 51 base shapes
     for r in range(rot_info[s]):
-        image_array = nav.npload("/src", "data", f"stimulus_rotated_hollow={int(hollow)}_lw={linewidth}", f"idx={s}_pxl=227_r={r}.npy") # shape = (227, 227, 4)
+        image_array = nav.npload(nav.datapath, f"stimulus_rotated_hollow={int(hollow)}_lw={linewidth}", f"idx={s}_pxl=227_r={r}.npy") # shape = (227, 227, 4)
 
         # preprocess image value
         preproc_dic = {1: bcs.preprocess1, 2: bcs.preprocess2}
@@ -30,4 +34,4 @@ for s in range(51): # there are 51 base shapes
         image_arrays.append(image_array)
 image_arrays = np.vstack(image_arrays)
 
-nav.npsave(image_arrays, "/src", "data", "stimulus", f"stacked_rotated_hollow={int(hollow)}_lw={linewidth}_light={int(light)}_scale={scale}_preproc={preprocess}.npy")
+nav.npsave(image_arrays, nav.datapath, "stimulus", f"stacked_rotated_hollow={int(hollow)}_lw={linewidth}_light={int(light)}_scale={scale}_preproc={preprocess}.npy")

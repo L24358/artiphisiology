@@ -1,3 +1,7 @@
+"""
+Analyze degree of On-Off Invariance (OOI) of a particular layer of a particular network
+"""
+
 import sys
 import warnings
 import numpy as np
@@ -25,8 +29,8 @@ print(f"Begin processing: Fill-outline invariance analysis, for network={mtype},
 warnings.filterwarnings("ignore")
 
 # load data
-R_light = nav.npload("/src", "results", f"responses_{mtype}", f"key={hidden_key}_hollow=0_scale={scale}_light=1_lw={linewidth}_preproc={preprocess}.npy")
-R_dark = nav.npload("/src", "results", "/src", "results", f"responses_{mtype}", f"key={hidden_key}_hollow=0_scale={scale}_light=0_lw={linewidth}_preproc={preprocess}.npy")
+R_light = nav.npload(nav.homepath, "results", f"responses_{mtype}", f"key={hidden_key}_hollow=0_scale={scale}_light=1_lw={linewidth}_preproc={preprocess}.npy")
+R_dark = nav.npload(nav.homepath, "results", "/src", "results", f"responses_{mtype}", f"key={hidden_key}_hollow=0_scale={scale}_light=0_lw={linewidth}_preproc={preprocess}.npy")
 folders = [f"OOI_{mtype}", f"key={hidden_key}_preproc={preprocess}"]
 
 # analysis
@@ -44,4 +48,4 @@ for s in range(len(R_light)):
         plt.xlabel("Resp. to light stimuli"); plt.ylabel("Resp. to dark stimuli"); plt.title(f"$r^2$: {round(r2,2)}, \u03C1: {round(pr, 2)}") 
         vis.savefig(f"idx={s}.png", folders=folders)
         dic[s] = [pr, mse, r2]
-nav.pklsave(dic, "/src", "results", *folders, "fit_metrics.pkl")
+nav.pklsave(dic, nav.homepath, "results", *folders, "fit_metrics.pkl")

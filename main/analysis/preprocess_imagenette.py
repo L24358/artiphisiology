@@ -1,9 +1,13 @@
+"""
+Preprocess images from imagenette.
+"""
+
 import os
 import numpy as np
 import handytools.navigator as nav
 from spectools.stimulus.dataloader import Imagenette
 
-if False: # step 1
+if False: # step 1: store all the paths
     img_path = os.path.join(nav.datapath, "imagenette", "train")
 
     paths = []
@@ -17,7 +21,7 @@ if False: # step 1
     nav.pklsave(paths, nav.datapath, "imagenette", "train_images.pkl")
     nav.pklsave(labels, nav.datapath, "imagenette", "train_labels.pkl")
 
-if True: # step 2, need to also adjust the loading name in dataloaders.Imagenette()
+if True: # step 2: filter out single-channel images, need to also adjust the loading name in dataloaders.Imagenette()
     dataset = Imagenette()
     img_paths = dataset.img_paths
     img_labels = dataset.img_labels

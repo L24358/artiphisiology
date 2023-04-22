@@ -1,5 +1,8 @@
 """
-Try out get_response2 on VGG16
+Get responses of networks to different images (light, scale, hollow, etc.).
+
+@ Updates:
+    - Added compatibility with VGG16.
 """
 
 import sys
@@ -26,12 +29,12 @@ foldername = f"_rotated_hollow={int(hollow)}_lw={linewidth}"
 if mtype == "AN": mfunc = mdl.get_alexnet
 elif mtype == "VGG16": mfunc = mdl.get_vgg16
 model = mfunc(hidden_keys=[hidden_key])
-rot_info = nav.pklload("/src", "data", "stimulus", "shape_info.pkl")["rotation"]
+rot_info = nav.pklload(nav.datapath, "stimulus", "shape_info.pkl")["rotation"]
 
 image_arrays = []
 for s in range(51):
     for r in range(rot_info[s]):
-        image_array = nav.npload("/src", "data", "stimulus" + foldername, f"idx={s}_pxl=227_r={r}.npy") # shape = (227, 227, 4)
+        image_array = nav.npload(nav.datapath, "stimulus" + foldername, f"idx={s}_pxl=227_r={r}.npy") # shape = (227, 227, 4)
 
         # preprocess image value
         image_array = image_array/255. # dark BG (0), light image (1)
@@ -51,4 +54,4 @@ model(X)
 print("Model output completed.")
 R = model.hidden_info[hidden_key][0] # shape = (51, 256, 13, 13)
 Rc = bcs.get_center_response(R) # shape = (256, 51)
-nav.npsave(Rc, "/src", "results", "responses"+foldername+f"_light={int(light)}_scale={scale}", f"{mtype}_CR_stim=shape_key={hidden_key}.npy")
+nav.npsave(Rc, nav.homepath, "results", "responses"+foldername+f"_light={int(light)}_scale={scale}", f"{mtype}_CR_stim=shape_key={hidden_key}.npy")

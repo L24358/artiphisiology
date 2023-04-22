@@ -1,3 +1,8 @@
+"""
+Plot basic image shapes.
+"""
+
+import os
 import numpy as np
 import matplotlib.pyplot as plt
 import spectools.basics as bcs
@@ -14,12 +19,12 @@ if first_run: assert hollow == False # first_run should only be used if hollow=F
 
 # load data
 true_center = tot_pxl/2.0
-shape_coor = nav.pklload("/src", "data", "stimulus", "shape_coor.pkl")
-filepath = ["/src", "data", f"stimulus_centered_hollow={int(hollow)}_lw={linewidth}"]
+shape_coor = nav.pklload(nav.datapath, "stimulus", "shape_coor.pkl")
+filepath = [nav.datapath, f"stimulus_centered_hollow={int(hollow)}_lw={linewidth}"]
 nav.mkfile(*filepath)
-nav.mkfile(f"/src/graphs/shapes_centered_hollow={int(hollow)}_lw={linewidth}/")
+nav.mkfile(os.path.join(nav.graphpath, f"shapes_centered_hollow={int(hollow)}_lw={linewidth}/"))
 if not first_run:
-    shift_dic = nav.pklload("/src", "data", "stimulus", f"shift_filled_pxl={tot_pxl}_lw={linewidth}.pkl") # key: idx, value: shift [dx, dy, 0] for each idx
+    shift_dic = nav.pklload(nav.datapath, "stimulus", f"shift_filled_pxl={tot_pxl}_lw={linewidth}.pkl") # key: idx, value: shift [dx, dy, 0] for each idx
 else:
     shift_dic = {}
 
@@ -39,9 +44,9 @@ for s in range(len(shape_coor)):
 
     new_image_array = shift(image_array, shift_dic[s], mode="nearest")
     new_image = vis.get_image(new_image_array)
-    new_image.save(f"/src/graphs/shapes_centered_hollow={int(hollow)}_lw={linewidth}/idx={s}_pxl={tot_pxl}.png")
+    new_image.save(nav.graphpath + f"shapes_centered_hollow={int(hollow)}_lw={linewidth}/idx={s}_pxl={tot_pxl}.png")
     nav.npsave(new_image_array, *filepath, f"idx={s}_pxl={tot_pxl}.npy")
 
     plt.close("all")
 
-if first_run: nav.pklsave(shift_dic, "/src", "results", "stimulus", f"shift_filled_pxl={tot_pxl}_lw={linewidth}.pkl")
+if first_run: nav.pklsave(shift_dic, nav.homepath, "results", "stimulus", f"shift_filled_pxl={tot_pxl}_lw={linewidth}.pkl")

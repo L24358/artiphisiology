@@ -1,10 +1,15 @@
+"""
+Store TK's shape + texture stimulus as .npy files, and plot them.
+"""
+
+import os
 import cv2
 import handytools.visualizer as vis
 import handytools.navigator as nav
 from spectools.visualization import get_image
 from collections import OrderedDict
 
-foldername = "/src/data/TK393"
+foldername = os.path.join(nav.datapath, "TK393")
 constraint = lambda f: ("ShapeTexture" in f) and ("txt" in f)
 
 def sortfile(files):
@@ -20,7 +25,7 @@ files = sortfile(nav.list_dir(foldername, constraint))
 for f in files:
     data = nav.read_row(f, foldername, nav.empty)
     image_array = nav.to_float(data[2]).reshape(227, 227)
-    nav.npsave(image_array, "/src", "data", "stimulus_TK", f"idx={count}_pxl=227.npy")
+    nav.npsave(image_array, nav.datapath, "stimulus_TK", f"idx={count}_pxl=227.npy")
     count += 1
 
-    cv2.imwrite(f"/src/graphs/stimulus_TK393/idx={count}_pxl=227.png", image_array/100*256)
+    cv2.imwrite(os.path.join(nav.graphpath, f"stimulus_TK393/idx={count}_pxl=227.png"), image_array/100*256)
