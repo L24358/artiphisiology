@@ -11,15 +11,16 @@ from spectools.stimulus.dataloader import Imagenette
 key = 11
 unit = 435
 bs = 128
+device = "cuda:0"
 torch.manual_seed(42)
 
 # define model, loss func, optimizer
 dataset = Imagenette()
 train_dataloader = DataLoader(dataset, batch_size=bs, shuffle=True)
-dmodel = VGG16_deconv()
+dmodel = VGG16_deconv().to(device)
 optimizer = Adam(dmodel.parameters(), lr=0.001)
 loss_fn = nn.MSELoss()
-output_size = nav.pklload("/src", "data", f"outsize_imagenette_seed={42}_bs={bs}", f"key={key}_unit={unit}.pkl")
+output_size = nav.pklload(nav.datapath, f"outsize_imagenette_seed={42}_bs={bs}", f"key={key}_unit={unit}.pkl")
 
 # training loop
 dmodel.train()
@@ -33,8 +34,8 @@ for epoch in range(1):
 
         # get single channel output from model
         image, _, _ = data
-        hidden_info = nav.pklload("/src", "data", f"hresp_imagenette_seed={42}_bs={bs}", f"key={key}_unit={unit}_B={i}.pkl")
-        pool_indices = nav.pklload("/src", "data", f"poolidx_imagenette_seed={42}_bs={bs}", f"key={key}_unit={unit}_B={i}.pkl")
+        hidden_info = nav.pklload(nav.datapath, f"hresp_imagenette_seed={42}_bs={bs}", f"key={key}_unit={unit}_B={i}.pkl")
+        pool_indices = nav.pklload(nav.datapath, f"poolidx_imagenette_seed={42}_bs={bs}", f"key={key}_unit={unit}_B={i}.pkl")
         R = hidden_info[key][0] # select single channel
 
         # pass input into deconv model
@@ -42,7 +43,7 @@ for epoch in range(1):
         image_pred = dmodel(R, key, unit, pool_indices, output_size)
 
         # calculate loss and step
-        loss = loss_fn(image, image_pred)
+        loss = loss_fn(image.to(device), image_pred)
         loss.backward()
         losses.append(loss.item())
         optimizer.step()

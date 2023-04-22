@@ -9,9 +9,9 @@ from torch.utils.data import Dataset
 
 class Imagenette(Dataset):
     def __init__(self, transform = None):
-        self.img_paths = nav.pklload("/src", "data", "imagenette", "train_images_filtered.pkl")
-        self.img_labels = nav.pklload("/src", "data", "imagenette", "train_labels_filtered.pkl")
-        self.folderpath = os.path.join("/src", "data", "imagenette", "train")
+        self.img_paths = nav.pklload(nav.datapath, "imagenette", "train_images_filtered.pkl")
+        self.img_labels = nav.pklload(nav.datapath, "imagenette", "train_labels_filtered.pkl")
+        self.folderpath = os.path.join(nav.datapath, "imagenette", "train")
         self.transform = self.init_transform()
 
     def __len__(self):

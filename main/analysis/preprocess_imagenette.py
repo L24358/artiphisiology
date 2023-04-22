@@ -1,21 +1,23 @@
+import os
 import numpy as np
 import handytools.navigator as nav
 from spectools.stimulus.dataloader import Imagenette
 
-if False:
-    img_path = os.path.join("/src", "data", "imagenette", "train")
+if False: # step 1
+    img_path = os.path.join(nav.datapath, "imagenette", "train")
 
     paths = []
     labels = []
-    for label, dir in enumerate(sorted(os.listdir(img_path))):
+    folders = nav.list_dir(img_path, os.path.isdir)
+    for label, dir in enumerate(sorted(folders)):
         for file in os.listdir(os.path.join(img_path, dir)):
             paths.append(os.path.join(dir, file))
             labels.append(label)
     
-    nav.pklsave(paths, "/src", "data", "imagenette", "train_images.pkl")
-    nav.pklsave(labels, "/src", "data", "imagenette", "train_labels.pkl")
+    nav.pklsave(paths, nav.datapath, "imagenette", "train_images.pkl")
+    nav.pklsave(labels, nav.datapath, "imagenette", "train_labels.pkl")
 
-if True:
+if True: # step 2, need to also adjust the loading name in dataloaders.Imagenette()
     dataset = Imagenette()
     img_paths = dataset.img_paths
     img_labels = dataset.img_labels
@@ -31,6 +33,6 @@ if True:
 
         if i%1000 == 0: print("Progress: ", i)
 
-    nav.pklsave(new_paths, "/src", "data", "imagenette", "train_images_filtered.pkl")
-    nav.pklsave(new_labels, "/src", "data", "imagenette", "train_labels_filtered.pkl")
+    nav.pklsave(new_paths, nav.datapath, "imagenette", "train_images_filtered.pkl")
+    nav.pklsave(new_labels, nav.datapath, "imagenette", "train_labels_filtered.pkl")
 

@@ -8,7 +8,7 @@ def get_parameters(name):
     if name == "alexnet":
         net = torch.hub.load('pytorch/vision:v0.10.0', 'alexnet', weights="AlexNet_Weights.IMAGENET1K_V1")
     elif name == "vgg16":
-        net = torch.hub.load('pytorch/vision:v0.10.0', 'vgg11', weights="VGG11_Weights.IMAGENET1K_V1")
+        net = torch.hub.load('pytorch/vision:v0.10.0', 'vgg11', pretrained=True) # weights="VGG11_Weights.IMAGENET1K_V1"
     elif name == "resnet18":
         net = torch.hub.load('pytorch/vision:v0.10.0', 'resnet18', pretrained=True)
     else:
@@ -17,20 +17,20 @@ def get_parameters(name):
     return params
 
 def get_alexnet(hidden_keys=[]):
-    params = nav.pklload("/src", "data", "models", "alexnet_parameters.pkl")
+    params = nav.pklload(nav.modelpath, "alexnet_parameters.pkl")
     model = AlexNet(hidden_keys=hidden_keys)
     model.load_state_dict(params)
     return model
 
 def get_vgg16(hidden_keys=[]):
-    params = nav.pklload("/src", "data", "models", "vgg16_parameters.pkl")
+    params = nav.pklload(nav.modelpath, "vgg16_parameters.pkl")
     model = VGG16(hidden_keys=hidden_keys)
     model.load_state_dict(params)
     return model
 
 def get_resnet18(hidden_keys=[]):
     return None
-    params = nav.pklload("/src", "data", "models", "resnet18_parameters.pkl")
+    params = nav.pklload(nav.modelpath, "resnet18_parameters.pkl")
     model = ResNet(hidden_keys=hidden_keys)
     model.load_state_dict(params)
     return model
