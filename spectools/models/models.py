@@ -17,13 +17,13 @@ def get_parameters(name):
     return params
 
 def get_alexnet(hidden_keys=[]):
-    params = nav.pklload(nav.modelpath, "alexnet_parameters.pkl")
+    params = nav.pklload(nav.modelpath, "params", "alexnet_parameters.pkl")
     model = AlexNet(hidden_keys=hidden_keys)
     model.load_state_dict(params)
     return model
 
 def get_vgg16(hidden_keys=[]):
-    params = nav.pklload(nav.modelpath, "vgg16_parameters.pkl")
+    params = nav.pklload(nav.modelpath, "params", "vgg16_parameters.pkl")
     model = VGG16(hidden_keys=hidden_keys)
     model.load_state_dict(params)
     return model
