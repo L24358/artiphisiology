@@ -12,7 +12,7 @@ class Imagenette(Dataset):
         self.img_paths = nav.pklload(nav.datapath, "imagenette", "train_images_filtered.pkl")
         self.img_labels = nav.pklload(nav.datapath, "imagenette", "train_labels_filtered.pkl")
         self.folderpath = os.path.join(nav.datapath, "imagenette", "train")
-        self.transform = self.init_transform()
+        self.transform = self.init_transform(transform)
 
     def __len__(self):
         return len(self.img_labels)
@@ -23,5 +23,8 @@ class Imagenette(Dataset):
         label = self.img_labels[idx]
         return image.type(torch.float), label, idx
     
-    def init_transform(self):
-        return trans.Compose([trans.CenterCrop(227)])
+    def init_transform(self, transform):
+        if transform == None: 
+            return trans.Compose([trans.CenterCrop(227)])
+        else:
+            return transform
