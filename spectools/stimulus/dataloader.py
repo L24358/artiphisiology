@@ -19,7 +19,7 @@ class Imagenette(Dataset):
 
     def __getitem__(self, idx):
         image = read_image(os.path.join(self.folderpath, self.img_paths[idx]))
-        image = self.transform(image)
+        image = self.transform(image.float())
         label = self.img_labels[idx]
         return image.type(torch.float), label, idx
     

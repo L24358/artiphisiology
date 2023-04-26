@@ -50,19 +50,20 @@ class Guided_backprop():
         first_layer = modules[0][1] 
         first_layer.register_backward_hook(first_layer_hook_fn)
 
-    def visualize(self, input_image, target_class):
-        model_output = self.model(input_image)
+    def visualize(self, input_image, target_class, model_kwargs = {}):
+        model_output = self.model(input_image, **model_kwargs)
         self.model.zero_grad()
         pred_class = model_output.argmax().item()
         
-        grad_target_map = torch.zeros(model_output.shape,
-                                      dtype=torch.float)
-        if target_class is not None:
-            grad_target_map[0][target_class] = 1
-        else:
-            grad_target_map[0][pred_class] = 1
+        # grad_target_map = torch.zeros(model_output.shape,
+        #                               dtype=torch.float)
+        # if target_class is not None:
+        #     grad_target_map[0][target_class] = 1
+        # else:
+        #     grad_target_map[0][pred_class] = 1
+        # import pdb; pdb.set_trace()
         
-        model_output.backward(grad_target_map)
+        model_output.backward(model_output) # grad_target_map
         
         result = self.image_reconstruction.data[0].permute(1,2,0)
         return result.numpy()

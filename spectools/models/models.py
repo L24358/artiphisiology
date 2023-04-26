@@ -106,7 +106,7 @@ class VGG16(nn.Module):
 
                 if premature_quit:
                     self.flag_output = False # only need to append once
-                    return None
+                    return x
             
             if self.flag_output:
                 self.output_size[i].append(x.shape)
