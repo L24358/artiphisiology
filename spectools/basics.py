@@ -64,3 +64,10 @@ def set_to_zero(model, target, id1, id2):
             param.data = param_clone
             flag = False
     if flag: raise InputError(f"{target} is not found in model.named_parameters().")
+
+def normalize(image):
+    norm = (image - image.mean())/image.std()
+    norm = norm * 0.1
+    norm = norm + 0.5
+    norm = norm.clip(0, 1)
+    return norm

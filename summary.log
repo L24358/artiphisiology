@@ -1,3 +1,9 @@
+### 20230424 ###
+1. Make sure that code is correct (with Wyeth)
+2. One direction is to just look at different networks and say it's different (same analysis)
+3. I think deconvolution is needed to say anything about this (try guided backprop)
+4. Hopefully I can get to circuitry (that's my goal)
+
 ### 20230417 ###
 Random Thoughts:
 
