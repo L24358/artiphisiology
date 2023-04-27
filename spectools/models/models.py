@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 import numpy as np
 import handytools.navigator as nav
-# from .resnet import ResNet
+from spectools.models.resnet import ResNet, BasicBlock
 
 def get_parameters(name):
     if name == "alexnet":
@@ -14,6 +14,29 @@ def get_parameters(name):
     else:
         raise ValueError(f"`name` cannot be {name}.")
     params = {name: parameter for name, parameter in net.named_parameters()}
+    return params
+
+def get_additional_resnet18():
+    net = torch.hub.load('pytorch/vision:v0.10.0', 'resnet18', pretrained=True)
+    layers = {net.bn1: "bn1",
+              net.layer1[0].bn1: "layer1.0.bn1", net.layer1[0].bn2: "layer1.0.bn2",
+              net.layer1[1].bn1: "layer1.1.bn1", net.layer1[1].bn2: "layer1.1.bn2",
+              net.layer2[0].bn1: "layer2.0.bn1", net.layer2[0].bn2: "layer2.0.bn2",
+              net.layer2[1].bn1: "layer2.1.bn1", net.layer2[1].bn2: "layer2.1.bn2",
+              net.layer3[0].bn1: "layer3.0.bn1", net.layer3[0].bn2: "layer3.0.bn2",
+              net.layer3[1].bn1: "layer3.1.bn1", net.layer3[1].bn2: "layer3.1.bn2",
+              net.layer4[0].bn1: "layer4.0.bn1", net.layer4[0].bn2: "layer4.0.bn2",
+              net.layer4[1].bn1: "layer4.1.bn1", net.layer4[1].bn2: "layer4.1.bn2",
+              net.layer2[0].downsample[1]: "layer2.0.downsample.1",
+              net.layer3[0].downsample[1]: "layer3.0.downsample.1",
+              net.layer4[0].downsample[1]: "layer4.0.downsample.1",
+    }
+
+    params = {}
+    for layer in layers:
+        name = layers[layer]
+        params[name + ".running_mean"] = layer.running_mean
+        params[name + ".running_var"] = layer.running_var
     return params
 
 def get_alexnet(hidden_keys=[]):
@@ -29,9 +52,10 @@ def get_vgg16(hidden_keys=[]):
     return model
 
 def get_resnet18(hidden_keys=[]):
-    return None
-    params = nav.pklload(nav.modelpath, "resnet18_parameters.pkl")
-    model = ResNet(hidden_keys=hidden_keys)
+    params = nav.pklload(nav.modelpath, "params", "resnet18_parameters.pkl")
+    params2 = nav.pklload(nav.modelpath, "params", "resnet18_parameters_add.pkl")
+    params.update(params2)
+    model = ResNet(BasicBlock, [2, 2, 2, 2]) #hidden_keys=hidden_keys
     model.load_state_dict(params)
     return model
 
@@ -195,4 +219,4 @@ class AlexNet(nn.Module):
         self.hidden_info = {**dic, **self.hidden_info} # update, with priority given to existing self.hidden_info
 
 if __name__ == "__main__":
-    get_parameters("vgg16")
+    get_resnet18()

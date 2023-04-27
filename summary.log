@@ -1,3 +1,7 @@
+1. ResNet
+2. Guided backprop
+3. Centering and unit size: circle slightly smaller than RF of Conv 5 (diameter = 32-93 pixels)
+
 ### 20230424 ###
 1. Make sure that code is correct (with Wyeth)
 2. One direction is to just look at different networks and say it's different (same analysis)
