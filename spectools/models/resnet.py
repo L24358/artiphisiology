@@ -168,6 +168,7 @@ class ResNet(nn.Module):
         width_per_group: int = 64,
         replace_stride_with_dilation: Optional[List[bool]] = None,
         norm_layer: Optional[Callable[..., nn.Module]] = None,
+        hidden_keys: List = None,
     ) -> None:
         super().__init__()
         if norm_layer is None:
@@ -215,6 +216,11 @@ class ResNet(nn.Module):
                 elif isinstance(m, BasicBlock) and m.bn2.weight is not None:
                     nn.init.constant_(m.bn2.weight, 0)  # type: ignore[arg-type]
 
+        # hidden keys
+        self.hidden_keys = hidden_keys
+        self.hidden_info = {}
+        self.update_hidden_keys()
+
     def _make_layer(
         self,
         block: Type[Union[BasicBlock, Bottleneck]],
@@ -257,16 +263,18 @@ class ResNet(nn.Module):
         return nn.Sequential(*layers)
 
     def _forward_impl(self, x: Tensor) -> Tensor:
-        # See note [TorchScript super()]
-        x = self.conv1(x)
-        x = self.bn1(x)
-        x = self.relu(x)
-        x = self.maxpool(x)
+        
+        pre_layers = [self.conv1, self.bn1, self.relu, self.maxpool]
+        for i, layer in enumerate(pre_layers):
+            x = layer(x)
+            if i in self.hidden_keys: self.hidden_info[i].append(x)
 
-        x = self.layer1(x)
-        x = self.layer2(x)
-        x = self.layer3(x)
-        x = self.layer4(x)
+        main_layers = [self.layer1, self.layer2, self.layer3, self.layer4]
+        for layer in main_layers:
+            for child in list(layer.children()): # per block
+                i += 1
+                x = child(x)
+                if i in self.hidden_keys: self.hidden_info[i].append(x)
 
         x = self.avgpool(x)
         x = torch.flatten(x, 1)
@@ -277,3 +285,7 @@ class ResNet(nn.Module):
     def forward(self, x: Tensor) -> Tensor:
         return self._forward_impl(x)
 
+    def update_hidden_keys(self):
+        dic = {}
+        for key in self.hidden_keys: dic[key] = []
+        self.hidden_info = {**dic, **self.hidden_info} # update, with priority given to existing self.hidden_info

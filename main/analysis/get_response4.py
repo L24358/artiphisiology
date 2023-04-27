@@ -29,6 +29,7 @@ print(f"Begin processing: network={mtype}, key={hidden_key}, hollow={bool(hollow
 # load model, info and define parameters
 if mtype == "AN": mfunc = mdl.get_alexnet
 elif mtype == "VGG16": mfunc = mdl.get_vgg16
+elif mtype == "ResNet18": mfunc = mdl.get_resnet18
 model = mfunc(hidden_keys=[hidden_key])
 rot_info = nav.pklload(nav.datapath, "stimulus", "shape_info.pkl")["rotation"]
 

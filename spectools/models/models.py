@@ -55,7 +55,7 @@ def get_resnet18(hidden_keys=[]):
     params = nav.pklload(nav.modelpath, "params", "resnet18_parameters.pkl")
     params2 = nav.pklload(nav.modelpath, "params", "resnet18_parameters_add.pkl")
     params.update(params2)
-    model = ResNet(BasicBlock, [2, 2, 2, 2]) #hidden_keys=hidden_keys
+    model = ResNet(BasicBlock, [2, 2, 2, 2], hidden_keys=hidden_keys)
     model.load_state_dict(params)
     return model
 
