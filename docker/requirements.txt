@@ -1,3 +1,6 @@
 pytest
 jupyter
 torchvision
+imageio
+seaborn
+tqdm
