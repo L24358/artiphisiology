@@ -11,7 +11,7 @@ import spectools.models.models as mdl
 key = 11
 unit = 435
 N = 256
-B = 66
+B = 73
 
 diffs = {}
 for n in range(N):
@@ -27,6 +27,7 @@ diff_array = np.array(diff_array)
 diff_mean = diff_array.mean(axis=1)
 diff_std = diff_array.std(axis=1)
 idx = np.flip(np.argsort(diff_mean)) # index from largest to smallest unit
+nav.npsave(idx, nav.datapath, "results", "subtraction_VGG16", "respidx.npy")
 
 params = mdl.get_parameters("vgg16")
 weights = params["features.11.weight"].detach().numpy()[unit].squeeze()
@@ -35,6 +36,7 @@ for filt in weights: # shape = (256, 3, 3)
     mag = np.abs(filt).sum()
     mags.append(mag)
 mags = np.array(mags)
+nav.npsave(idx, nav.datapath, "results", "subtraction_VGG16", "filtidx.npy")
 
 fig = plt.figure(figsize=(12, 4))
 ax1 = fig.add_subplot(131)

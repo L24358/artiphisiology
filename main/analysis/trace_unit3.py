@@ -26,7 +26,7 @@ torch.manual_seed(42)
 print(f"CAUTION: the pre-layer number of units ``N`` needs to be adjusted manually based on key. Current key is {key}, and N is {N}.")
 
 # define dataset, models
-dataset = Imagenette()
+dataset = Imagenette("train")
 train_dataloader = DataLoader(dataset, batch_size=bs, shuffle=True)
 model = get_vgg16(hidden_keys=[key]).to(device)
 

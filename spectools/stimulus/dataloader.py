@@ -8,10 +8,10 @@ from torchvision.io import read_image
 from torch.utils.data import Dataset
 
 class Imagenette(Dataset):
-    def __init__(self, transform = None):
-        self.img_paths = nav.pklload(nav.datapath, "imagenette", "train_images_filtered.pkl")
-        self.img_labels = nav.pklload(nav.datapath, "imagenette", "train_labels_filtered.pkl")
-        self.folderpath = os.path.join(nav.datapath, "imagenette", "train")
+    def __init__(self, tpe, transform = None):
+        self.img_paths = nav.pklload(nav.datapath, "imagenette", f"{tpe}_images_filtered.pkl")
+        self.img_labels = nav.pklload(nav.datapath, "imagenette", f"{tpe}_labels_filtered.pkl")
+        self.folderpath = os.path.join(nav.datapath, "imagenette", tpe)
         self.transform = self.init_transform(transform)
 
     def __len__(self):

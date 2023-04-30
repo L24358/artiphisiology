@@ -7,8 +7,10 @@ import numpy as np
 import handytools.navigator as nav
 from spectools.stimulus.dataloader import Imagenette
 
+tpe = "val"
+
 if False: # step 1: store all the paths
-    img_path = os.path.join(nav.datapath, "imagenette", "train")
+    img_path = os.path.join(nav.datapath, "imagenette", tpe)
 
     paths = []
     labels = []
@@ -18,11 +20,11 @@ if False: # step 1: store all the paths
             paths.append(os.path.join(dir, file))
             labels.append(label)
     
-    nav.pklsave(paths, nav.datapath, "imagenette", "train_images.pkl")
-    nav.pklsave(labels, nav.datapath, "imagenette", "train_labels.pkl")
+    nav.pklsave(paths, nav.datapath, "imagenette", f"{tpe}_images.pkl")
+    nav.pklsave(labels, nav.datapath, "imagenette", f"{tpe}_labels.pkl")
 
 if True: # step 2: filter out single-channel images, need to also adjust the loading name in dataloaders.Imagenette()
-    dataset = Imagenette()
+    dataset = Imagenette(tpe)
     img_paths = dataset.img_paths
     img_labels = dataset.img_labels
 
@@ -37,6 +39,6 @@ if True: # step 2: filter out single-channel images, need to also adjust the loa
 
         if i%1000 == 0: print("Progress: ", i)
 
-    nav.pklsave(new_paths, nav.datapath, "imagenette", "train_images_filtered.pkl")
-    nav.pklsave(new_labels, nav.datapath, "imagenette", "train_labels_filtered.pkl")
+    nav.pklsave(new_paths, nav.datapath, "imagenette", f"{tpe}_images_filtered.pkl")
+    nav.pklsave(new_labels, nav.datapath, "imagenette", f"{tpe}_labels_filtered.pkl")
 
