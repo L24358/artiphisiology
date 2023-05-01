@@ -63,3 +63,8 @@ What is the minimum circuitry for OOI?
 2. Run plot_image (may need to un-comment the shift_dic parts)
 3. Run plot_image2
 4. Run get_response2
+
+### Models ###
+AlexNet:
+VGG16: 3 8 11 13 16 18
+ResNet: 3 5 7 9

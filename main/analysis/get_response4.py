@@ -24,13 +24,14 @@ scale = man.argv_manager(argv_dic, 4, 1, tpe=float) # int
 light = man.argv_manager(argv_dic, 5, True, tpe=man.bool_int)
 linewidth = man.argv_manager(argv_dic, 6, 1, tpe=int)
 preprocess = man.argv_manager(argv_dic, 7, 2, tpe=int)
+device = "cpu"
 print(f"Begin processing: network={mtype}, key={hidden_key}, hollow={bool(hollow)}, scale={scale}, light={bool(light)}, linewidth={linewidth}, preprocess={preprocess}")
 
 # load model, info and define parameters
 if mtype == "AN": mfunc = mdl.get_alexnet
 elif mtype == "VGG16": mfunc = mdl.get_vgg16
 elif mtype == "ResNet18": mfunc = mdl.get_resnet18
-model = mfunc(hidden_keys=[hidden_key])
+model = mfunc(hidden_keys=[hidden_key]).to(device)
 rot_info = nav.pklload(nav.datapath, "stimulus", "shape_info.pkl")["rotation"]
 
 # process image
@@ -50,7 +51,7 @@ for s in range(51): # there are 51 base shapes
         image_arrays.append(image_array)
 image_arrays = np.vstack(image_arrays)
 
-X = torch.from_numpy(image_arrays)
+X = torch.from_numpy(image_arrays).to(device)
 model(X)
 R = model.hidden_info[hidden_key][0] # shape = (51, 256, 13, 13)
 Rc = bcs.get_center_response(R) # shape = (256, 51)

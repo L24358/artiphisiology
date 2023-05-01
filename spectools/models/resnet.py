@@ -263,6 +263,8 @@ class ResNet(nn.Module):
         return nn.Sequential(*layers)
 
     def _forward_impl(self, x: Tensor) -> Tensor:
+
+        x = x.float()
         
         pre_layers = [self.conv1, self.bn1, self.relu, self.maxpool]
         for i, layer in enumerate(pre_layers):

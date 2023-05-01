@@ -18,7 +18,7 @@ argv_dic = man.argv_to_dic(sys.argv)
 # hyperparameters
 mtype = man.argv_manager(argv_dic, 1, "AN")
 hidden_key = man.argv_manager(argv_dic, 2, 3, tpe=int)
-scale = 1
+scale = 1.0
 light = True
 linewidth = 1
 preprocess = man.argv_manager(argv_dic, 3, 2, tpe=int)

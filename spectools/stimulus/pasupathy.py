@@ -90,5 +90,5 @@ pasu_shape = [
 [-1.6,0.0,-0.988,0.122,-0.468,0.468,-0.122,0.988,0.0,1.6,0.1,1.14,0.351,0.751,0.74,0.5,1.2,0.4,1.6,0.0,1.131,-1.131,0.0,-1.6,-0.4,-1.2,-0.5,-0.74,-0.751,-0.351,-1.14,-0.1,-1.6,0.0]]
 
 # save these
-nav.pklsave(pasu_shape, "/src", "data", "stimulus", "shape_coor.pkl")
-nav.pklsave({"coor": pasu_shape, "rotation": pasu_shape_nrotu}, "/src", "data", "stimulus", "shape_info.pkl")
+nav.pklsave(pasu_shape, nav.datapath, "stimulus", "shape_coor.pkl")
+nav.pklsave({"coor": pasu_shape, "rotation": pasu_shape_nrotu}, nav.datapath, "stimulus", "shape_info.pkl")
