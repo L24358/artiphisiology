@@ -29,8 +29,8 @@ print(f"Begin processing: Fill-outline invariance analysis, for network={mtype},
 warnings.filterwarnings("ignore")
 
 # load data
-R_baseline = nav.npload(nav.homepath, "results", f"responses_{mtype}", f"key={hidden_key}_hollow={int(hollow)}_scale=1_light={int(light)}_lw={linewidth}_preproc={preprocess}.npy")
-R_scaled = nav.npload(nav.homepath, "results", "/src", "results", f"responses_{mtype}", f"key={hidden_key}_hollow={int(hollow)}_scale={scale}_light={int(light)}_lw={linewidth}_preproc={preprocess}.npy")
+R_baseline = nav.npload(nav.homepath, "results", f"responses_{mtype}", f"key={hidden_key}_hollow={int(hollow)}_scale=1.0_light={int(light)}_lw={linewidth}_preproc={preprocess}.npy")
+R_scaled = nav.npload(nav.homepath, "results", f"responses_{mtype}", f"key={hidden_key}_hollow={int(hollow)}_scale={scale}_light={int(light)}_lw={linewidth}_preproc={preprocess}.npy")
 folders = [f"DRI_{mtype}_scale={scale}", f"key={hidden_key}_preproc={preprocess}"]
 
 # analysis

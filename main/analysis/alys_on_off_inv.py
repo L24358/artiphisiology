@@ -20,9 +20,9 @@ mtype = man.argv_manager(argv_dic, 1, "AN")
 hidden_key = man.argv_manager(argv_dic, 2, 8, tpe=int)
 hollow = False
 linewidth = 1
-scale = 1
+scale = 1.0
 preprocess = man.argv_manager(argv_dic, 3, 2, tpe=int)
-print(f"Begin processing: Fill-outline invariance analysis, for network={mtype}, key={hidden_key}, preprocess={preprocess}.")
+print(f"Begin processing: On-off invariance analysis, for network={mtype}, key={hidden_key}, preprocess={preprocess}.")
 
 
 # catch warnings
@@ -30,7 +30,7 @@ warnings.filterwarnings("ignore")
 
 # load data
 R_light = nav.npload(nav.homepath, "results", f"responses_{mtype}", f"key={hidden_key}_hollow=0_scale={scale}_light=1_lw={linewidth}_preproc={preprocess}.npy")
-R_dark = nav.npload(nav.homepath, "results", "/src", "results", f"responses_{mtype}", f"key={hidden_key}_hollow=0_scale={scale}_light=0_lw={linewidth}_preproc={preprocess}.npy")
+R_dark = nav.npload(nav.homepath, "results", f"responses_{mtype}", f"key={hidden_key}_hollow=0_scale={scale}_light=0_lw={linewidth}_preproc={preprocess}.npy")
 folders = [f"OOI_{mtype}", f"key={hidden_key}_preproc={preprocess}"]
 
 # analysis
