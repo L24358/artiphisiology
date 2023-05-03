@@ -1,3 +1,7 @@
+"""
+@ TODO:
+    - show_img_and_grad(image.squeeze(), ggrads, "temp.png", f"Layer {mdl.AN_layer[hkey]}, Unit {unit}")
+"""
 import torch
 import pickle
 import numpy as np
@@ -25,10 +29,6 @@ for i, data in enumerate(train_dataloader):
     image, _, _ = data
     tt_var = Variable(image, requires_grad=True)
     ggrads = GBP.generate_gradients(tt_var, hkey, unit)
-    gim = ggrads - ggrads.min()   # Normalize the gradient image
-    gim = gim /gim.max()
-    gim = np.moveaxis(gim,0,-1)  # Move 1st array dimension to end
-    plt.subplot(1,2,2);
-    plt.imshow(gim)
-    vis.savefig()
+    
     import pdb; pdb.set_trace()
+
