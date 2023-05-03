@@ -15,7 +15,7 @@ device = "cuda:0"
 torch.manual_seed(42)
 
 # define model, loss func, optimizer
-dataset = Imagenette()
+dataset = Imagenette("train")
 train_dataloader = DataLoader(dataset, batch_size=bs, shuffle=True)
 dmodel = VGG16_deconv().to(device)
 optimizer = Adam(dmodel.parameters(), lr=0.001)
