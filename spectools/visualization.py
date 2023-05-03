@@ -39,5 +39,29 @@ def show_img_and_grad(image, ggrads, figname, title=""):
     gim = np.moveaxis(gim,0,-1)  # Move 1st array dimension to end
     plt.subplot(1,2,2);
     plt.imshow(gim)
-    plt.title(title)
+    plt.suptitle(title)
     vis.savefig(figname)
+
+def show_img_and_grad_top(top, images, ggrads, figname, title="", folders=[]):
+    fig = plt.figure(figsize=(6,3*top))
+
+    count = 1
+    for i in range(top):
+        ax = fig.add_subplot(top,2,count)
+        ax.axis("off")
+        img = images[i] - images[i].min()   # Normalize the gradient image
+        img = img /img.max()
+        img = np.moveaxis(img,0,-1)
+        plt.imshow(img)  # Plot the original image
+        count += 1
+
+        ax = fig.add_subplot(top,2,count)
+        ax.axis("off")
+        gim = ggrads[i] - ggrads[i].min()   # Normalize the gradient image
+        gim = gim /gim.max()
+        gim = np.moveaxis(gim,0,-1)  # Move 1st array dimension to end
+        plt.imshow(gim)
+        count += 1
+
+    plt.suptitle(title)
+    vis.savefig(figname, folders=folders)
