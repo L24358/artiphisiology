@@ -11,10 +11,10 @@ import handytools.navigator as nav
 from scipy.ndimage import shift
 
 # hyperparameters
-hollow = True
+hollow = False
 tot_pxl = 227
 linewidth = 1
-first_run = False 
+first_run = True
 if first_run: assert hollow == False # first_run should only be used if hollow=False
 
 # load data

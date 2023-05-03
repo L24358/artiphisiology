@@ -93,7 +93,7 @@ class GuidedBackprop():
   """
      Produces gradients generated with guided back propagation from given image
   """
-  def __init__(self, model):
+  def __init__(self, model, device="cpu"):
     self.model = model
     self.gradients = None
     self.outputs = []
@@ -102,6 +102,7 @@ class GuidedBackprop():
     self.model.eval()
     self.update_relus()
     self.hook_layers()
+    self.device = device
   
   def hook_layers(self):
     def hook_function(module, grad_in, grad_out):
@@ -154,6 +155,9 @@ class GuidedBackprop():
         break
     self.outputs = x;
     
+    # device modifications
+    if self.device != "cpu": x = x.cpu()
+
     # Target for backprop - find max response from target layer, target filter
     pos = np.where(x[0,target_filter,:,:]==x[0,target_filter,:,:].max())[:];
     one_hot_output = torch.FloatTensor(x.shape).zero_()
@@ -164,7 +168,10 @@ class GuidedBackprop():
     
     # Convert Pytorch variable to numpy array
     # [0] to get rid of the first channel (1,3,224,224)
-    gradients_as_arr = self.gradients.data.numpy()[0]
+    if self.device == "cpu":
+      gradients_as_arr = self.gradients.data.numpy()[0]
+    else:
+      gradients_as_arr = self.gradients.data.cpu().numpy()[0]
     return gradients_as_arr
   
   def generate_grads_min(self, input_image, target_layer, target_filter):

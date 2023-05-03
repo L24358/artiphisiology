@@ -1,6 +1,6 @@
-mtype="ResNet18"
+mtype="AN"
 
-for hkey in 0 1 2
+for hkey in 8
 do
 #    python3 get_response4.py $mtype $hkey 0 1 1 1 2
     python3 get_response4.py $mtype $hkey 0 0.5 1 1 2
