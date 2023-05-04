@@ -8,7 +8,7 @@ import spectools.basics as bcs
 # hyperparameters
 preprocess = 2
 thre = 0.8
-hk = 8
+hk = 3
 top = 20
 
 # helpful functions
@@ -43,4 +43,4 @@ for i in range(top):
     print(f"Unit is: {unit}, the r-squared values are: {compare[i][1:-1]}")
     units.append(unit)
 
-nav.npsave(nav.datapath, "gbp_AN", f"highFOIunits_hkey={hk}_thre={thre}.npy")
+nav.npsave(units, nav.datapath, "gbp_AN", f"highFOIunits_hkey={hk}_thre={thre}.npy")

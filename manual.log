@@ -1,0 +1,21 @@
+########## Stimulus ########################################
+* 225 Shape Stimulus; after that, texture
+* "centered": Pasupathy stimulus is centered
+* "rotated": Pasupathy stimulus is centered and rotated
+* "scaled": Pasupathy stimulus is centered, rotated, and scaled
+############################################################
+
+########## Models ##########################################
+1. Run save_alexnet.py
+2. Run plot_image.py (may need to un-comment the shift_dic parts)
+3. Run plot_image2.py
+4. Run get_response2.py
+############################################################
+
+########## Guided Backprop (GBP) ###########################
+For a particular layer(hkey), modify ``hkey`` in all of these files, and run:
+1. exec_range_inv.sh
+2. get_invariant_units.py
+3. guided_backprop2.py
+4. get_max_response.py
+############################################################
