@@ -33,7 +33,7 @@ else:
 
 # get scale factor
 image_array = nav.npload(*filepath, f"idx={1}_pxl={tot_pxl}_r={0}.npy")
-diameter = max(image_array[..., 0].sum(axis=1)/255.)
+diameter = max(image_array[..., 0].sum(axis=1)/255.) # default: 71.753
 resize_factor = int(227*d/diameter)
 transform = T.Compose([T.Resize(resize_factor),
                         T.CenterCrop(227),
