@@ -18,4 +18,8 @@ For a particular layer(hkey), modify ``hkey`` in all of these files, and run:
 2. get_invariant_units.py
 3. guided_backprop2.py
 4. get_max_response.py
+
+Related analysis:
+* Run 1, 2, 3, 4 for all units in layer ``hkey``
+5. trace_unit5.py --> Which presynaptic units contribute most to the postsynaptic response? (Conditioned on Most-Exciting-Images) 
 ############################################################

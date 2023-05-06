@@ -1,0 +1,25 @@
+Questions that I'm interested in
+-------------------------------------------
+1. What features are the units encoding?
+    - This can be done using guided backpropagation (black magic)
+    - What about on neural data? --> MID [*a], RF [*2]
+2. What is the coding scheme for the networks?
+    - For example, does it use hierarchical coding or sparse coding?
+    - Hierarchical code: look at layer-by-layer receptive fields [*2,*b]
+    - Sparse coding: do most responsive images elicit the same pre-synaptic inputs? [*1, *c] 
+3. What are the circuitry mechanisms for certain units?
+
+
+Arguments
+-------------------------------------------
+[*a] MID is the more "justified" approach compared to QRF, because MID is about maximizing a reasonable quantity,
+    and QRF is the average of a black box output. 
+[*b] Although directional selectivity or shape selectivity doesn't need to happen in a particular layer,
+    it is perhaps advantageous that it does. (Then the downstream neurons can get what they need.)
+[*c] Maybe images recruit different presynaptic neurons, and not the same ones consistently.
+
+
+References
+-------------------------------------------
+[*1] get_max_response.py
+[*2] calc.py and get_QRF.py

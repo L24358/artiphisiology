@@ -22,7 +22,7 @@ mod = mdl.get_alexnet().to(device)
 GBP = GuidedBackprop(mod, device=device)
 dataset = Imagenette("train")
 train_dataloader = DataLoader(dataset, batch_size=bs, shuffle=False)
-units = nav.npload(nav.datapath, "gbp_AN", f"highFOIunits_hkey={hkey}_thre=0.8.npy")
+units = range(192) #nav.npload(nav.datapath, "gbp_AN", f"highFOIunits_hkey={hkey}_thre=0.8.npy")
 
 def save_gbp(unit):
     print("Unit ", unit)
@@ -35,4 +35,5 @@ def save_gbp(unit):
         nav.npsave(ggrads, nav.datapath, "results", "gbp_AN", f"ggrad_hkey={hkey}_unit={unit}_idx={i}.npy")    
         vis.print_batch(i, 1000)
 
-for unit in units: save_gbp(unit)
+for unit in units:
+    if not nav.exists(nav.datapath, "results", "gbp_AN", f"R_hkey={hkey}_unit={unit}_idx=0.npy"): save_gbp(unit)

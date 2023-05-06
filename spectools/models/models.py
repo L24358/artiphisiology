@@ -204,11 +204,13 @@ class AlexNet(nn.Module):
         self.hidden_info = {}
         self.update_hidden_keys(hidden_keys)
         
-    def forward(self, x):
+    def forward(self, x, premature_quit=False):
         x = x.float()
         for i, child in enumerate(list(self.features.children())):
             x = child(x)
-            if i in self.hidden_keys: self.hidden_info[i].append(x)
+            if i in self.hidden_keys:
+                self.hidden_info[i].append(x)
+                if premature_quit: return x
         for j, child in enumerate(list(self.classifier.children())):
             x = child(x)
             if i+(j+1) in self.hidden_keys: self.hidden_info[i+j+1].append(x)
