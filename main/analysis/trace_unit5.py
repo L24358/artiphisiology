@@ -18,7 +18,7 @@ from spectools.stimulus.dataloader import Imagenette
 # hyperparameters
 hkey = 3
 top = 20
-units = range(5,192)
+units = range(192)
 
 # load
 model = mdl.get_alexnet(hidden_keys=[hkey-1])
@@ -50,8 +50,3 @@ for unit in units:
             preidx_to_impact[f].append(rel_impact)
 
     nav.pklsave(preidx_to_impact, nav.datapath, "results", "trace_AN", f"impact_hkey={hkey}_unit={unit}.pkl")
-
-    
-    
-    
-    

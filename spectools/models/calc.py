@@ -34,8 +34,8 @@ def get_left(prevs, m, p, s2):
     h = len(prevs)
     l = list(np.ones(s2)*prevs[0]) + list(prevs) + list(np.ones(s2)*prevs[-1])
     idxs = l[:len(l)-(m-1):s2]
+    idxs = list(map(int, idxs))
     lefts = np.array(l)[idxs]
-    assert len(lefts) == floor((h+2*p-(m-1))/s2)+1
     return lefts
 
 def get_right(prevs, m, p, s2):
@@ -44,23 +44,27 @@ def get_right(prevs, m, p, s2):
     h = len(prevs)
     l = list(np.ones(s2)*prevs[0]) + list(prevs) + list(np.ones(s2)*prevs[-1])
     idxs = l[m-1:len(l):s2]
+    idxs = list(map(int, idxs))
     rights = np.array(l)[idxs]
-    assert len(rights) == floor((h+2*p-(m-1))/s2)+1
     return rights
 
 def get_boundaries_wrap(model, inp_size=227, verbose=False):
     # left is included, right is excluded, like standard python indexing
     prev_lefts = list(range(inp_size))
-    prev_rights = prev_lefts + 1
+    prev_rights = np.array(prev_lefts).astype(np.int32) + 1
 
     dic = {} # key: layer, value: boundary pairs
     for i, layer in enumerate(model.features):
-        m, p, s2 = layer.kernel_size, layer.padding, layer.stride
-        lefts = get_left(prev_lefts, m, p, s2)
-        rights = get_right(prev_rights, m, p, s2)
-        import pdb; pdb.set_trace()
 
-        dic[i] = list(zip(lefts, rights))
+        if isinstance(layer, nn.Conv2d) or isinstance(layer, nn.MaxPool2d):
+            m, p, s2 = layer.kernel_size, layer.padding, layer.stride
+            if isinstance(m, tuple): m = m[0]
+            if isinstance(p, tuple): p = p[0]
+            if isinstance(s2, tuple): s2 = s2[0]
+
+            lefts = get_left(prev_lefts, m, p, s2)
+            rights = get_right(prev_rights, m, p, s2)
+            dic[i] = list(zip(lefts, rights))
     return dic
 
 def get_images_from_loader(dataloader, idxs, size=(3,227,227)):
@@ -81,4 +85,4 @@ def get_images_from_loader(dataloader, idxs, size=(3,227,227)):
 if __name__ == "__main__":
     import spectools.models.models as mdl
     model = mdl.get_alexnet()
-    get_RF_wrap(model)
+    get_RF_wrap(model, verbose=True)

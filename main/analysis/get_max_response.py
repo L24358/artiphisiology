@@ -20,6 +20,9 @@ plot = True
 device = "cuda:0"
 units = range(192) #nav.npload(nav.datapath, "gbp_AN", f"highFOIunits_hkey={hkey}_thre=0.8.npy") 
 
+temp = nav.npload(nav.datapath, "gbp_AN", f"highFOIunits_hkey={hkey}_thre=0.8.npy") 
+import pdb; pdb.set_trace()
+
 # load
 mod = mdl.get_alexnet().to(device)
 dataset = Imagenette("train")
