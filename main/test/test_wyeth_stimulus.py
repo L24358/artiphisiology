@@ -15,13 +15,13 @@ s_all = vstack_alt(s_fill, s_hollow) # shape = (724,227,227), fill goes first
 s_all = np.expand_dims(s_all, 1)
 s_all = np.tile(s_all, (1,3,1,1)) # shape = (724,3,227,227)
 
-model = mdl.get_alexnet(hidden_keys=[2,3])
+model = mdl.get_alexnet(hidden_keys=[2,3], in_place=False)
 model(torch.from_numpy(s_all))
 R = model.hidden_info[3][0] # shape = (724,192,27,27)
 Rc = bcs.get_center_response(R) # shape = (192, 724)
 Rw = nav.npload(nav.datapath, "wyeth_foi", "conv2_sr.npy")
 
-plt.plot(Rc.flatten(), np.maximum(Rw,0).flatten(), "k.")
+plt.plot(Rc.flatten(), Rw.flatten(), "k.")
 plt.xlabel("Conv2 resp, my network")
 plt.ylabel("Conv2 resp, Wyeth's network")
 vis.savefig()

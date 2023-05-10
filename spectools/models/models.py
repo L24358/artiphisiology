@@ -41,9 +41,9 @@ def get_additional_resnet18():
         params[name + ".running_var"] = layer.running_var
     return params
 
-def get_alexnet(hidden_keys=[]):
+def get_alexnet(hidden_keys=[], in_place=True):
     params = nav.pklload(nav.modelpath, "params", "alexnet_parameters.pkl")
-    model = AlexNet(hidden_keys=hidden_keys)
+    model = AlexNet(hidden_keys=hidden_keys, in_place=in_place)
     model.load_state_dict(params)
     return model
 
