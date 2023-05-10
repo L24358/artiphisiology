@@ -1,7 +1,7 @@
 ### 20230506 ###
 1. (O) Finish running get_max_response.py (can see result from graphs, 127)
 2. (O) Double check trace_unit5.py logic (this is done running)
-3. Think a bit about get_impact.py (similarity/clustering index)
+3. (O) Think a bit about get_impact.py (similarity/clustering index)
 4. Fix get_boundaries_wrap in calc.py
 5. Finish and plot get_QRF.py
 

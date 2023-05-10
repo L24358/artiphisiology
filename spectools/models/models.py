@@ -164,25 +164,25 @@ class VGG16(nn.Module):
 
 
 class AlexNet(nn.Module):
-    def __init__(self, num_classes=1000, hidden_keys=[]):
+    def __init__(self, num_classes=1000, hidden_keys=[], in_place=True):
         super(AlexNet, self).__init__()
         self.features = nn.Sequential(
             nn.Conv2d(3, 64, kernel_size=11, stride=4, padding=2),
-            nn.ReLU(inplace=True),
+            nn.ReLU(inplace=in_place),
             nn.MaxPool2d(kernel_size = 3, stride = 2, dilation=1, ceil_mode=False),
 
             nn.Conv2d(64, 192, kernel_size=5, stride=1, padding=2),
-            nn.ReLU(inplace=True),
+            nn.ReLU(inplace=in_place),
             nn.MaxPool2d(kernel_size = 3, stride = 2, dilation=1, ceil_mode=False),
 
             nn.Conv2d(192, 384, kernel_size=3, stride=1, padding=1),
-            nn.ReLU(inplace=True),
+            nn.ReLU(inplace=in_place),
 
             nn.Conv2d(384, 256, kernel_size=3, stride=1, padding=1),
-            nn.ReLU(inplace=True),
+            nn.ReLU(inplace=in_place),
 
             nn.Conv2d(256, 256, kernel_size=3, stride=1, padding=1),
-            nn.ReLU(inplace=True),
+            nn.ReLU(inplace=in_place),
             nn.MaxPool2d(kernel_size = 3, stride = 2, dilation=1, ceil_mode=False),
 
             nn.Flatten(),
