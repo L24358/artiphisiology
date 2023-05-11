@@ -25,20 +25,43 @@ def get_n01_alexnet(layname):
   return m, zn
 
 device = "cuda:0"
-m, zn = get_n01_alexnet('conv2')
-dstim = torch.rand(1, 3, 227, 227)
 
-m = m.to(device)
-ttstim = dstim.to(device).float()
-rc = m.forward(ttstim) 
+fill = nav.npload(nav.datapath, "wyeth_foi", "fill.npy")
+hollow = nav.npload(nav.datapath, "wyeth_foi", "hollow.npy")
+fill = np.expand_dims(fill, axis=1)
+hollow = np.expand_dims(hollow, axis=1)
+fill = np.tile(fill, (1,3,1,1))
+hollow = np.tile(hollow, (1,3,1,1))
+fill = torch.from_numpy(fill).to(device).float()
+hollow = torch.from_numpy(hollow).to(device).float()
 
-model = mdl.get_alexnet(hidden_keys=[2,3], in_place=False)
+# m, zn = get_n01_alexnet('conv2')
+# dstim = torch.from_numpy(fill)
+
+# m = m.to(device)
+# ttstim = dstim.to(device).float()
+# rc = m.forward(ttstim) 
+
+model = mdl.get_alexnet(hidden_keys=[10], in_place=False)
 model.to(device)
-model(ttstim)
-R = model.hidden_info[3][0].cpu() # shape = (724,192,27,27)
-Rc = bcs.get_center_response(R) # shape = (192, 724)
+model(fill)
+model(hollow)
+R_fill = model.hidden_info[10][0].cpu() # shape = (724,192,27,27)
+Rc_fill = bcs.get_center_response(R_fill) # shape = (192, 724)
+R_hollow = model.hidden_info[10][1].cpu() # shape = (724,192,27,27)
+Rc_hollow = bcs.get_center_response(R_hollow) # shape = (192, 724)
 
-temp = rc[0, :, 13, 13]
-temp2 = Rc.flatten()
-plt.plot(temp.cpu().detach().numpy(), temp2, "k.")
-vis.savefig()
+all_pr = []
+for unit in range(256):
+  x = Rc_fill[unit]
+  y = Rc_hollow[unit]
+  pr = np.corrcoef(x, y)[0][1]
+  print(unit, pr)
+  all_pr.append(pr)
+
+
+import pdb; pdb.set_trace()
+# temp = rc[:, :, 13, 13]
+# temp2 = Rc.swapaxes(0, 1).flatten()
+# plt.plot(temp.cpu().detach().numpy().flatten(), temp2, "k.")
+# vis.savefig()
