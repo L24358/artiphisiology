@@ -16,9 +16,9 @@ from spectools.models.calc import get_images_from_loader
 from spectools.stimulus.dataloader import Imagenette
 
 # hyperparameters
-hkey = 3
+hkey = 6
 top = 20
-units = range(192)
+units = range(mdl.AN_units[hkey])
 
 # load
 model = mdl.get_alexnet(hidden_keys=[hkey-1])

@@ -13,7 +13,7 @@ from spectools.models.deconvnet import GuidedBackprop
 from spectools.stimulus.dataloader import Imagenette
 
 # hyperparameters
-hkey = 3 # layer of interest
+hkey = 6 # layer of interest
 bs = 1
 device = "cuda:0"
 
@@ -22,7 +22,7 @@ mod = mdl.get_alexnet().to(device)
 GBP = GuidedBackprop(mod, device=device)
 dataset = Imagenette("train")
 train_dataloader = DataLoader(dataset, batch_size=bs, shuffle=False)
-units = range(192) #nav.npload(nav.datapath, "gbp_AN", f"highFOIunits_hkey={hkey}_thre=0.8.npy")
+units = range(mdl.AN_units[hkey]) #nav.npload(nav.datapath, "gbp_AN", f"highFOIunits_hkey={hkey}_thre=0.8.npy")
 
 def save_gbp(unit):
     print("Unit ", unit)

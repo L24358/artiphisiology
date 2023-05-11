@@ -14,14 +14,11 @@ from spectools.stimulus.dataloader import Imagenette
 from spectools.models.calc import get_RF_wrap
 
 # hyperparameters
-hkey = 3 # layer of interest
+hkey = 6 # layer of interest
 top = 10
 plot = True
 device = "cuda:0"
-units = range(192) #nav.npload(nav.datapath, "gbp_AN", f"highFOIunits_hkey={hkey}_thre=0.8.npy") 
-
-temp = nav.npload(nav.datapath, "gbp_AN", f"highFOIunits_hkey={hkey}_thre=0.8.npy") 
-import pdb; pdb.set_trace()
+units = range(mdl.AN_units[hkey]) #nav.npload(nav.datapath, "gbp_AN", f"highFOIunits_hkey={hkey}_thre=0.8.npy") 
 
 # load
 mod = mdl.get_alexnet().to(device)

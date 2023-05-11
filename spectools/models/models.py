@@ -6,6 +6,8 @@ from spectools.models.resnet import ResNet, BasicBlock
 
 AN_layer = {3: "Conv2", 6: "Conv3", 8: "Conv4", 10: "Conv5"}
 
+AN_units = {3: 192, 6: 384, 8: 256}
+
 def get_parameters(name):
     if name == "alexnet":
         net = torch.hub.load('pytorch/vision:v0.10.0', 'alexnet', pretrained=True) # "AlexNet_Weights.IMAGENET1K_V1"
