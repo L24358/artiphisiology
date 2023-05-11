@@ -18,7 +18,7 @@ hkey = 6 # layer of interest
 top = 10
 plot = True
 device = "cuda:0"
-units = range(mdl.AN_units[hkey]) #nav.npload(nav.datapath, "gbp_AN", f"highFOIunits_hkey={hkey}_thre=0.8.npy") 
+units = range(1, 260) #range(mdl.AN_units[hkey]) #nav.npload(nav.datapath, "gbp_AN", f"highFOIunits_hkey={hkey}_thre=0.8.npy") 
 
 # load
 mod = mdl.get_alexnet().to(device)
@@ -31,11 +31,14 @@ for unit in units:
     max_to_idx = {} # key: max(R), value: i
     idx_to_coor = {} # key: i, value: index of the most resp. coordinate
     for i, data in enumerate(train_dataloader):
-        R = nav.npload(nav.datapath, "results", "gbp_AN", f"R_hkey={hkey}_unit={unit}_idx={i}.npy") # shape=(h,w)
-        max_idx = np.asarray(man.argsort2d(R, reverse=True)[:1]) # shape=(top=1, 2), coordinate of the top value
-        Rtop = man.sorted2d(R, max_idx)[0] # find the singular top value
-        max_to_idx[Rtop] = i
-        idx_to_coor[i] = max_idx
+        try:
+            R = nav.npload(nav.datapath, "results", "gbp_AN", f"R_hkey={hkey}_unit={unit}_idx={i}.npy") # shape=(h,w)
+            max_idx = np.asarray(man.argsort2d(R, reverse=True)[:1]) # shape=(top=1, 2), coordinate of the top value
+            Rtop = man.sorted2d(R, max_idx)[0] # find the singular top value
+            max_to_idx[Rtop] = i
+            idx_to_coor[i] = max_idx
+        except:
+            print(f"idx {i} not present.") # TODO: for some reason, idx >= 1475 does not exist.
 
     # sort responses
     keys = np.array(list(max_to_idx.keys())) # all responses

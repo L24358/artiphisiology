@@ -1,5 +1,7 @@
 ### 20230510 ###
 1. Run guided_backprop2, get_max_response, trace_unit5 for hkey = 6, 8.
+2. "val" dataset is deleted, because of insufficient memory.
+3. hkey=6 only gets to 
 
 ### 20230506 ###
 1. (O) Finish running get_max_response.py (can see result from graphs, 127)
