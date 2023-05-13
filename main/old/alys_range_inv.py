@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import handytools.navigator as nav
 import handytools.visualizer as vis
-from spectools.metrics.metrics import IGV
+from spectools.old.metrics import IGV
 
 hidden_key = 8
 light = True

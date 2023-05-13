@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import handytools.navigator as nav
-from spectools.metrics.metrics import fvmax, cubic_spline
+from spectools.old.metrics import fvmax, cubic_spline
 
 shape_coor = nav.pklload("/src", "data", "stimulus", "shape_coor.pkl")
 ps, dps, ddps = cubic_spline(np.array(shape_coor[0]).reshape(-1, 2))

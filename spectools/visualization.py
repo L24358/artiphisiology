@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from PIL import Image
 import handytools.visualizer as vis
-from spectools.metrics.metrics import cubic_spline
+from spectools.old.metrics import cubic_spline
 
 def get_image(array): return Image.fromarray(array)
 

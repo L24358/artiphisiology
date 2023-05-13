@@ -3,8 +3,8 @@ import matplotlib.pyplot as plt
 import handytools.navigator as nav
 import handytools.visualizer as vis
 from sklearn.metrics import r2_score
-from spectools.metrics.metrics import cubic_spline, curvature, angle, apc_obj_func, response_sparsity, double_exp_wrap
-from spectools.solvers import DESolver
+from spectools.old.metrics import cubic_spline, curvature, angle, apc_obj_func, response_sparsity, double_exp_wrap
+from spectools.old.solvers import DESolver
 
 # hyperparameters
 hidden_key = 10

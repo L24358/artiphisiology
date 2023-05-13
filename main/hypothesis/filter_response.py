@@ -4,7 +4,7 @@ Filter responses according to sparsity constraint.
 
 import numpy as np
 import handytools.navigator as nav
-from spectools.metrics.metrics import response_sparsity
+from spectools.old.metrics import response_sparsity
 
 def constraint(f):
     deter1 = "responses" in f

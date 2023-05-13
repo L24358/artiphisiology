@@ -5,7 +5,7 @@
 import torch
 import numpy as np
 import torch.nn as nn
-from .models import get_vgg16
+from ..models.models import get_vgg16
 
 class VGG16_deconv(torch.nn.Module):
     def __init__(self):

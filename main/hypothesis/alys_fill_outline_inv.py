@@ -10,7 +10,7 @@ import handytools.navigator as nav
 import handytools.visualizer as vis
 import handytools.manipulator as man
 from scipy.stats import pearsonr
-from spectools.metrics.metrics import MSE, R2
+from spectools.old.metrics import MSE, R2
 
 # argv
 argv_dic = man.argv_to_dic(sys.argv)

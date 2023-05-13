@@ -2,8 +2,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import handytools.navigator as nav
 import handytools.visualizer as vis
-from spectools.metrics.metrics import cubic_spline, curvature, angle, double_exp_wrap, responsive
-from spectools.solvers import GNSolver
+from spectools.old.metrics import cubic_spline, curvature, angle, double_exp_wrap, responsive
+from spectools.old.solvers import GNSolver
 
 # hyperparameters
 c_num =  0

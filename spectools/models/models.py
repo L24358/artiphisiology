@@ -4,7 +4,10 @@ import numpy as np
 import handytools.navigator as nav
 from spectools.models.resnet import ResNet, BasicBlock
 
-AN_layer = {3: "Conv2", 6: "Conv3", 8: "Conv4", 10: "Conv5"}
+AN_layer = {0: "Conv1", 3: "Conv2", 6: "Conv3", 8: "Conv4", 10: "Conv5"}
+VGG16_layer = {0: "Conv1", 3: "Conv2", 6: "Conv3", 8: "Conv4", 11: "Conv5", 13: "Conv6", 16: "Conv7", 18: "Conv8"}
+ResNet18_layer = {0: "Conv1", 4: "b-Block1.1", 5: "b-Block1.2", 6: "b-Block2.1", 7: "b-Block2.2",
+                  8: "b-Block3.1", 9: "b-Block3.2", 10: "b-Block4.1", 11: "b-Block4.2"}
 
 AN_units = {3: 192, 6: 384, 8: 256}
 
