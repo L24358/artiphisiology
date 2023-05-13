@@ -5,7 +5,8 @@
 import torch
 import numpy as np
 import torch.nn as nn
-from ..models.models import get_vgg16
+from copy import deepcopy
+from .models import get_vgg16
 
 class VGG16_deconv(torch.nn.Module):
     def __init__(self):
@@ -93,9 +94,10 @@ class GuidedBackprop():
   """
      Produces gradients generated with guided back propagation from given image
   """
-  def __init__(self, model, device="cpu"):
+  def __init__(self, model, device="cpu", is_resnet=False):
     self.model = model
     self.gradients = None
+    self.is_resnet = is_resnet
     self.outputs = []
     self.forward_relu_outputs = []
     # Put model in evaluation mode
@@ -108,8 +110,12 @@ class GuidedBackprop():
     def hook_function(module, grad_in, grad_out):
         self.gradients = grad_in[0]
     # Register hook to the first layer
-    first_layer = list(self.model.features._modules.items())[0][1]
-    first_layer.register_backward_hook(hook_function)
+    if not self.is_resnet:
+      first_layer = list(self.model.features._modules.items())[0][1]
+      first_layer.register_backward_hook(hook_function)
+    else:
+      first_layer = self.model.conv1
+      first_layer.register_backward_hook(hook_function)
   
   def update_relus(self):
     """
@@ -135,25 +141,67 @@ class GuidedBackprop():
       self.forward_relu_outputs.append(ten_out)
     
     # Loop through layers, hook up ReLUs
-    for pos, module in self.model.features._modules.items():
-      if isinstance(module, nn.ReLU):
-        module.register_backward_hook(relu_backward_hook_function)
-        module.register_forward_hook(relu_forward_hook_function)
-  
+    if not self.is_resnet:
+      for pos, module in self.model.features._modules.items():
+        if isinstance(module, nn.ReLU):
+          module.register_backward_hook(relu_backward_hook_function)
+          module.register_forward_hook(relu_forward_hook_function)
+    
+    else:
+      #  self.model.relu.register_backward_hook(relu_backward_hook_function)
+      #  self.model.relu.register_forward_hook(relu_backward_hook_function)
+       layers = [self.model.layer1, self.model.layer2, self.model.layer3, self.model.layer4]
+       for layer in layers:
+          for bb in range(2):
+             for child in layer[bb].children():
+                if isinstance(child, nn.ReLU):
+                  child.register_backward_hook(relu_backward_hook_function)
+                  child.register_forward_hook(relu_forward_hook_function)
+
   def generate_gradients(self, input_image, target_layer, target_filter):
     self.model.zero_grad()
     # Forward pass
     x = input_image
-    for index, layer in enumerate(self.model.features):
-      # Forward pass layer by layer
-      # x is not used after this point because it is only needed to trigger
-      # the forward hook function
-      x = layer(x)
-      # Only need to forward until the selected layer is reached
-      if index == target_layer:
-        # (forward hook function triggered)
-        break
-    self.outputs = x;
+
+    if not self.is_resnet:
+      for index, layer in enumerate(self.model.features):
+        # Forward pass layer by layer
+        # x is not used after this point because it is only needed to trigger
+        # the forward hook function
+        x = layer(x)
+        # Only need to forward until the selected layer is reached
+        if index == target_layer:
+          # (forward hook function triggered)
+          break
+      temp = x.cpu().detach().numpy()
+      self.outputs = temp # ORIGINALLY self.outputs = x
+
+    else:
+      notfoundflag = True
+      pre_layers = [self.model.conv1, self.model.bn1, self.model.relu, self.model.maxpool]
+      for i, layer in enumerate(pre_layers):
+        x = layer(x)
+        if i == target_layer: notfoundflag = False; break
+
+      if notfoundflag:
+        main_layers = [self.model.layer1, self.model.layer2, self.model.layer3, self.model.layer4]
+        for layer in main_layers:
+            for bb in range(2):
+              i += 1
+              
+              identity = x
+              out = layer[bb].conv1(x)
+              out = layer[bb].bn1(out)
+              out = layer[bb].relu(out)
+              out = layer[bb].conv2(out)
+              out = layer[bb].bn2(out)
+              if layer[bb].downsample is not None: identity = layer[bb].downsample(x)
+              out += identity
+              x = layer[bb].relu(out)
+
+              if i == target_layer: break
+      temp = x.cpu().detach().numpy()
+      self.outputs = temp
     
     # device modifications
     if self.device != "cpu": x = x.cpu()
@@ -172,6 +220,7 @@ class GuidedBackprop():
       gradients_as_arr = self.gradients.data.numpy()[0]
     else:
       gradients_as_arr = self.gradients.data.cpu().numpy()[0]
+
     return gradients_as_arr
   
   def generate_grads_min(self, input_image, target_layer, target_filter):

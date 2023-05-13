@@ -8,8 +8,12 @@ AN_layer = {0: "Conv1", 3: "Conv2", 6: "Conv3", 8: "Conv4", 10: "Conv5"}
 VGG16_layer = {0: "Conv1", 3: "Conv2", 6: "Conv3", 8: "Conv4", 11: "Conv5", 13: "Conv6", 16: "Conv7", 18: "Conv8"}
 ResNet18_layer = {0: "Conv1", 4: "b-Block1.1", 5: "b-Block1.2", 6: "b-Block2.1", 7: "b-Block2.2",
                   8: "b-Block3.1", 9: "b-Block3.2", 10: "b-Block4.1", 11: "b-Block4.2"}
-
 AN_units = {3: 192, 6: 384, 8: 256}
+ResNet18_units = {0: 64, 4: 64, 5: 64, 6: 128, 7: 128, 8: 256, 9: 256, 10: 512, 11: 512}
+
+def get_units(mtype, hkey):
+    if mtype == "AN": return AN_units[hkey]
+    elif mtype == "ResNet18": return ResNet18_units[hkey]
 
 def get_parameters(name):
     if name == "alexnet":
@@ -228,4 +232,5 @@ class AlexNet(nn.Module):
         self.hidden_info = {**dic, **self.hidden_info} # update, with priority given to existing self.hidden_info
 
 if __name__ == "__main__":
-    get_resnet18()
+    model = get_resnet18()
+    import pdb; pdb.set_trace()

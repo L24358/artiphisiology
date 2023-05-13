@@ -1,3 +1,6 @@
+### 20230513 ###
+1. Find RF for all nets.
+
 ### 20230510 ###
 1. Run guided_backprop2, get_max_response, trace_unit5 for hkey = 6, 8.
 2. "val" dataset is deleted, because of insufficient memory.
