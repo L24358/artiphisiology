@@ -12,12 +12,13 @@ def get_centroid(image_array, tot_pxl):
     return centroid
 
 def get_center_response(responses):
+    if isinstance(responses, torch.Tensor): responses = responses.detach().numpy()
     if len(responses.shape) == 4: 
         B, C, H, W = responses.shape
-        return responses[:, :, H // 2, W //2].detach().numpy().swapaxes(0, 1) # shape = (C, B) # .squeeze(axis=(2,3))
+        return responses[:, :, H // 2, W //2].swapaxes(0, 1) # shape = (C, B) # .squeeze(axis=(2,3))
     elif len(responses.shape) == 2:
         B, C = responses.shape
-        return responses.detach().numpy().T # shape = (C, B)
+        return responses.T # shape = (C, B)
     else:
         raise AlgorithmError(f"The shape of responses is incorrect. Should have either 2 or 4 dimensions.")
     
