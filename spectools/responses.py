@@ -1,4 +1,5 @@
 import gc
+import torch
 import numpy as np
 import handytools.visualizer as vis
 import spectools.basics as bcs
@@ -7,7 +8,8 @@ import handytools.navigator as nav
 
 def get_response(hkeys, stim, folders, fname, mtype="AN"):
     # params
-    device = "cuda:0"
+    torch.cuda.empty_cache()
+    device = "cpu"
 
     # load model
     if mtype == "AN": mfunc = mdl.get_alexnet
@@ -20,7 +22,8 @@ def get_response(hkeys, stim, folders, fname, mtype="AN"):
     # save results
     Rcs = {}
     for hkey in hkeys:
-        R = model.hidden_info[hkey][0].cpu() # shape = (B,#units,h,w)
+        R = model.hidden_info[hkey][0] # shape = (B,#units,h,w)
+        if device != "cpu": R = R.cpu()
         Rc = bcs.get_center_response(R) # shape = (#units,B)
         nav.npsave(Rc, *folders, fname(hkey))
         Rcs[hkey] = Rc
@@ -46,6 +49,7 @@ def get_drr(hkeys, folders, fname, mtype="AN"):
     """
     Get dynamic range response.
     """
+    torch.cuda.empty_cache()
     from spectools.stimulus.dataloader import Imagenette
     dataset = Imagenette("train")
     device = "cuda:0"
@@ -80,6 +84,7 @@ def get_drr(hkeys, folders, fname, mtype="AN"):
 def get_drr_wrapper(hkeys, fname, mtype="AN"):
     Rcs = {}
     folders = [nav.resultpath, f"responses_{mtype}"]
+    torch.cuda.empty_cache()
 
     mkeys = [] # missing keys
     for hkey in hkeys:
