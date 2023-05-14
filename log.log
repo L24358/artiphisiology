@@ -1,5 +1,6 @@
 ### 20230513 ###
-1. Find RF for all nets.
+1. (O) Find RF for all nets.
+2. OOI and DRI.
 
 ### 20230510 ###
 1. Run guided_backprop2, get_max_response, trace_unit5 for hkey = 6, 8.
