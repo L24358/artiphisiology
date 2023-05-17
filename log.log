@@ -1,6 +1,18 @@
+### 20230515 ###
+1. (O) Sanity check RF for AN and VGG16.
+2. (O) Plot FOI vs maximal potential RF size for AN and VGG16.
+3. Cross correlation for color and texture metric. (50,000 images: 200 images)
+4. (O) FOI sanity check for vgg16 as well (with Wyeth's numbers).
+5. Sanity check RF for ResNet.
+6. Plot FOI vs max RF for Resnet18.
+7. (O) Fix VGG16b.
+8. Play with gdb and get_unit_by_rank if there's time.
+9. Plot FOI vs layer depth (and percentage?).
+
 ### 20230513 ###
 1. (O) Find RF for all nets.
-2. OOI and DRI.
+2. (50%) OOI and DRI.
+3. Gbp for other nets
 
 ### 20230510 ###
 1. Run guided_backprop2, get_max_response, trace_unit5 for hkey = 6, 8.

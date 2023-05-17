@@ -6,6 +6,7 @@ from spectools.models.resnet import ResNet, BasicBlock
 
 AN_layer = {0: "Conv1", 3: "Conv2", 6: "Conv3", 8: "Conv4", 10: "Conv5"}
 VGG16_layer = {0: "Conv1", 3: "Conv2", 6: "Conv3", 8: "Conv4", 11: "Conv5", 13: "Conv6", 16: "Conv7", 18: "Conv8"}
+VGG16b_layer = {0: "Conv1", 2: "Conv2", 5: "Conv3", 7: "Conv4", 10: "Conv5", 12: "Conv6", 14: "Conv7", 17: "Conv8", 19: "Conv9", 21: "Conv10", 24: "Conv11", 26: "Conv12", 28: "Conv13"}
 ResNet18_layer = {0: "Conv1", 4: "b-Block1.1", 5: "b-Block1.2", 6: "b-Block2.1", 7: "b-Block2.2",
                   8: "b-Block3.1", 9: "b-Block3.2", 10: "b-Block4.1", 11: "b-Block4.2"}
 AN_units = {3: 192, 6: 384, 8: 256}
@@ -13,13 +14,16 @@ ResNet18_units = {0: 64, 4: 64, 5: 64, 6: 128, 7: 128, 8: 256, 9: 256, 10: 512, 
 
 def get_units(mtype, hkey):
     if mtype == "AN": return AN_units[hkey]
+    elif mtype == "VGG16b": return VGG16b_layer[hkey]
     elif mtype == "ResNet18": return ResNet18_units[hkey]
 
 def get_parameters(name):
     if name == "alexnet":
         net = torch.hub.load('pytorch/vision:v0.10.0', 'alexnet', pretrained=True) # "AlexNet_Weights.IMAGENET1K_V1"
     elif name == "vgg16":
-        net = torch.hub.load('pytorch/vision:v0.10.0', 'vgg11', pretrained=True) # weights="VGG11_Weights.IMAGENET1K_V1"
+        net = torch.hub.load('pytorch/vision:v0.10.0', 'vgg11', pretrained=True) # weights="s"
+    elif name == "vgg16b":
+        net = torch.hub.load('pytorch/vision:v0.10.0', 'vgg16', pretrained=True)
     elif name == "resnet18":
         net = torch.hub.load('pytorch/vision:v0.10.0', 'resnet18', pretrained=True)
     else:
@@ -62,6 +66,12 @@ def get_vgg16(hidden_keys=[]):
     model.load_state_dict(params)
     return model
 
+def get_vgg16b(hidden_keys=[]):
+    params = nav.pklload(nav.modelpath, "params", "vgg16b_parameters.pkl")
+    model = VGG16b(hidden_keys=hidden_keys)
+    model.load_state_dict(params)
+    return model
+
 def get_resnet18(hidden_keys=[]):
     params = nav.pklload(nav.modelpath, "params", "resnet18_parameters.pkl")
     params2 = nav.pklload(nav.modelpath, "params", "resnet18_parameters_add.pkl")
@@ -69,6 +79,21 @@ def get_resnet18(hidden_keys=[]):
     model = ResNet(BasicBlock, [2, 2, 2, 2], hidden_keys=hidden_keys)
     model.load_state_dict(params)
     return model
+
+def get_batch_hidden_info(model, stim, device="cpu"):
+    dic = {}
+    for hkey in model.hidden_keys: dic[hkey] = []
+
+    for batch in stim:
+        model(batch.unsqueeze(0).to(device))
+        for hkey in model.hidden_keys:
+            dic[hkey].append(model.hidden_info[hkey][0].detach().numpy())
+        model.reset_storage()
+
+    for hkey in model.hidden_keys:
+        dic[hkey] = np.vstack(dic[hkey])
+    return dic
+
 
 class VGG16(nn.Module):
     def __init__(
@@ -171,6 +196,106 @@ class VGG16(nn.Module):
         self.output_size = {}
         for layer in range(21): self.output_size[layer] = []
 
+class VGG16b(nn.Module):
+    def __init__(
+        self, hidden_keys: list = [], num_classes: int = 1000, init_weights: bool = True, dropout: float = 0.5, in_place = True) -> None:
+        super().__init__()
+        self.features = nn.Sequential(
+            nn.Conv2d(3, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1)),
+            nn.ReLU(inplace=in_place),
+            nn.Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1)),
+            nn.ReLU(inplace=in_place),
+            nn.MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False),
+            nn.Conv2d(64, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1)),
+            nn.ReLU(inplace=in_place),
+            nn.Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1)),
+            nn.ReLU(inplace=in_place),
+            nn.MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False),
+            nn.Conv2d(128, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1)),
+            nn.ReLU(inplace=in_place),
+            nn.Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1)),
+            nn.ReLU(inplace=in_place),
+            nn.Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1)),
+            nn.ReLU(inplace=in_place),
+            nn.MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False),
+            nn.Conv2d(256, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1)),
+            nn.ReLU(inplace=in_place),
+            nn.Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1)),
+            nn.ReLU(inplace=in_place),
+            nn.Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1)),
+            nn.ReLU(inplace=in_place),
+            nn.MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False),
+            nn.Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1)),
+            nn.ReLU(inplace=in_place),
+            nn.Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1)),
+            nn.ReLU(inplace=in_place),
+            nn.Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1)),
+            nn.ReLU(inplace=in_place),
+            nn.MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False),
+        )
+        self.avgpool = nn.AdaptiveAvgPool2d(output_size=(7, 7))
+        self.classifier = nn.Sequential(
+            nn.Linear(in_features=25088, out_features=4096, bias=True),
+            nn.ReLU(inplace=in_place),
+            nn.Dropout(p=dropout, inplace=False),
+            nn.Linear(in_features=4096, out_features=4096, bias=True),
+            nn.ReLU(inplace=in_place),
+            nn.Dropout(p=0.5, inplace=False),
+            nn.Linear(in_features=4096, out_features=1000, bias=True),
+        )
+        if init_weights:
+            for m in self.modules():
+                if isinstance(m, nn.Conv2d):
+                    nn.init.kaiming_normal_(m.weight, mode="fan_out", nonlinearity="relu")
+                    if m.bias is not None:
+                        nn.init.constant_(m.bias, 0)
+                elif isinstance(m, nn.BatchNorm2d):
+                    nn.init.constant_(m.weight, 1)
+                    nn.init.constant_(m.bias, 0)
+                elif isinstance(m, nn.Linear):
+                    nn.init.normal_(m.weight, 0, 0.01)
+                    nn.init.constant_(m.bias, 0)
+
+        # initialize hidden info
+        self.hidden_keys = hidden_keys
+        self.hidden_info = {}
+        self.reset_storage()
+
+    def forward(self, x: torch.Tensor, premature_quit=True, filt=lambda x:x) -> torch.Tensor:
+        x = x.float()
+
+        # features
+        for i, child in enumerate(list(self.features.children())):
+            x = child(x)
+
+            if i in self.hidden_keys:
+                self.hidden_info[i].append(filt(x))
+
+                if premature_quit and i == max(self.hidden_keys):
+                    self.flag_output = False # only need to append once
+                    return x
+                
+        # avg pooling and flatten
+        x = self.avgpool(x)
+        if i+1 in self.hidden_keys: self.hidden_info[i+1].append(filt(x)) # layer i+1
+        x = torch.flatten(x, 1)
+
+        # classifier
+        for j, child in enumerate(list(self.classifier.children())):
+            x = child(x)
+            if (i+1)+(j+1) in self.hidden_keys: self.hidden_info[i+j+2].append(filt(x)) # starts from layer i+2=(i+1)+(j+1) because j=0
+        return x
+
+    def update_hidden_keys(self):
+        dic = {}
+        for key in self.hidden_keys: dic[key] = []
+        self.hidden_info = {**dic, **self.hidden_info} # update, with priority given to existing self.hidden_info
+
+    def reset_storage(self):
+        del self.hidden_info
+        self.hidden_info = {}
+        self.update_hidden_keys()
+
 
 class AlexNet(nn.Module):
     def __init__(self, num_classes=1000, hidden_keys=[], in_place=True):
@@ -231,6 +356,14 @@ class AlexNet(nn.Module):
         for key in self.hidden_keys: dic[key] = []
         self.hidden_info = {**dic, **self.hidden_info} # update, with priority given to existing self.hidden_info
 
+    def reset_storage(self):
+        del self.hidden_info
+        self.hidden_info = {}
+        self.update_hidden_keys(self.hidden_keys)
+
 if __name__ == "__main__":
-    model = get_resnet18()
-    import pdb; pdb.set_trace()
+    if False:
+        params = get_parameters("vgg16b")
+        nav.pklsave(params, nav.modelpath, "params", "vgg16b_parameters.pkl")
+
+    net = get_vgg16b()

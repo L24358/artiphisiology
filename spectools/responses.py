@@ -6,7 +6,7 @@ import spectools.basics as bcs
 import spectools.models.models as mdl
 import handytools.navigator as nav
 
-def get_response(hkeys, stim, folders, fname, mtype="AN"):
+def get_response(hkeys, stim, folders, fname, mtype="AN", save=True):
     # params
     torch.cuda.empty_cache()
     device = "cpu"
@@ -14,22 +14,21 @@ def get_response(hkeys, stim, folders, fname, mtype="AN"):
     # load model
     if mtype == "AN": mfunc = mdl.get_alexnet
     elif mtype == "VGG16": mfunc = mdl.get_vgg16
+    elif mtype == "VGG16b": mfunc = mdl.get_vgg16b
     elif mtype == "ResNet18": mfunc = mdl.get_resnet18
     model = mfunc(hidden_keys=hkeys).to(device)
-    model(stim.to(device))
+    Rs = mdl.get_batch_hidden_info(model, stim)
     print(f"Using {mtype} on {device}.")
 
     # save results
     Rcs = {}
     for hkey in hkeys:
-        R = model.hidden_info[hkey][0] # shape = (B,#units,h,w)
-        if device != "cpu": R = R.cpu()
-        Rc = bcs.get_center_response(R) # shape = (#units,B)
-        nav.npsave(Rc, *folders, fname(hkey))
+        Rc = bcs.get_center_response(Rs[hkey]) # shape = (#units,B)
+        if save: nav.npsave(Rc, *folders, fname(hkey))
         Rcs[hkey] = Rc
     return Rcs
 
-def get_response_wrapper(hkeys, stim, fname, mtype="AN"):
+def get_response_wrapper(hkeys, stim, fname, mtype="AN", save=True, override=False):
     Rcs = {}
     folders = [nav.resultpath, f"responses_{mtype}"]
 
@@ -41,8 +40,13 @@ def get_response_wrapper(hkeys, stim, fname, mtype="AN"):
         else:
             mkeys.append(hkey)
 
-    Rcs2 = get_response(mkeys, stim, folders, fname, mtype=mtype)
-    Rcs.update(Rcs2)
+    print("Executing the follow missing keys: ", mkeys)
+    if override:
+        Rcs2 = get_response(hkeys, stim, folders, fname, mtype=mtype, save=save)
+        Rcs.update(Rcs2)
+    elif mkeys != []:
+        Rcs2 = get_response(mkeys, stim, folders, fname, mtype=mtype, save=save)
+        Rcs.update(Rcs2)
     return Rcs
 
 def get_drr(hkeys, folders, fname, mtype="AN"):

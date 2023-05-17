@@ -2,6 +2,7 @@
 Example code for how to get response of candidate network for a particular stimulus desired.
 """
 
+import spectools.models.models as mdl
 from spectools.stimulus.wyeth import get_stimulus
 from spectools.responses import get_response_wrapper
 
@@ -11,8 +12,8 @@ sz = 50
 lw = 1.5
 fg = 1.0
 bg = 0.0
-hkeys = [0, 3, 6, 8, 10]
-mtype = "AN"
+hkeys = list(mdl.VGG16b_layer.keys())
+mtype = "VGG16b"
 
 fill = get_stimulus(1, xn=xn, sz=sz, lw=lw, fg=fg, bg=bg)
 fname = lambda hkey: f"hkey={hkey}_fill=1_xn={xn}_sz={sz}_lw={lw}_fg={fg}_bg={bg}.npy"

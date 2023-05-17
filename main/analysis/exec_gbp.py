@@ -40,5 +40,5 @@ def save_gbp(unit):
         vis.print_batch(i, 1000)
 
 for unit in units:
-    if True: #not nav.exists(nav.resultpath, f"gbp_{mtype}", f"R_hkey={hkey}_unit={unit}_idx=0.npy"):
+    if not nav.exists(nav.resultpath, f"gbp_{mtype}", f"R_hkey={hkey}_unit={unit}_idx={len(dataset)}.npy"):
         save_gbp(unit)
