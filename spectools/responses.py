@@ -40,7 +40,6 @@ def get_response_wrapper(hkeys, stim, fname, mtype="AN", save=True, override=Fal
         else:
             mkeys.append(hkey)
 
-    print("Executing the follow missing keys: ", mkeys)
     if override:
         Rcs2 = get_response(hkeys, stim, folders, fname, mtype=mtype, save=save)
         Rcs.update(Rcs2)
