@@ -3,6 +3,7 @@ import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
 import handytools.visualizer as vis
+import handytools.manipulator as man
 import spectools.basics as bcs
 import spectools.models.models as mdl
 from math import ceil, floor
@@ -35,14 +36,27 @@ def get_narrowing_stim(pxl, ival):
         stims.append(stim)
     return np.vstack(stims), grid
     
+def combine_dict2(dict1, dict2):
+    dict12 = {}
+    # Combine dictionaries
+    for key in set(dict1.keys()).union(dict2.keys()):
+        dict12[key] = dict1.get(key, []) + dict2.get(key, [])
+    return dict12
+
 # main
-X, grid = get_narrowing_stim(400, 1)
+X, grid = get_narrowing_stim(400, 40)
 rfs = get_RF_resnet()
 print(rfs)
 
 # get response
 fname = lambda hkey: f"hkey={hkey}_narrowing.npy"
-Rcs = get_response_wrapper(hkeys, torch.from_numpy(X), fname, mtype="ResNet18", save=False, override=True)
+Rcs = {}
+for hkey in hkeys: Rcs[hkey] = []
+for ii in range(len(X)):
+    Rcs2 = get_response_wrapper(hkeys, torch.from_numpy(X[ii:ii+1]), fname, mtype="ResNet18", save=False, override=True)
+    for key in Rcs2.keys(): Rcs2[key] = [Rcs2[key].flatten()]
+    Rcs = combine_dict2(Rcs, Rcs2)
+for key in Rcs.keys(): Rcs[key] = np.array(Rcs[key]).T
 
 count = 0
 N = len(hkeys)
