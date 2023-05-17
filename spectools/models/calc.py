@@ -44,7 +44,7 @@ def get_RF_resnet(map_to=True):
     rfs = get_RF(layers_of_interest)
     if not map_to: return rfs
     else:
-        mapdic = {0:0, 4:3, 5:5, 6:7, 7:9, 8:11, 9:13, 10:15, 11:17}
+        mapdic = {0:0, 3:1, 4:3, 5:5, 6:7, 7:9, 8:11, 9:13, 10:15, 11:17}
         newrfs = {}
         for key in mapdic.keys():
             newrfs[key] = rfs[mapdic[key]]

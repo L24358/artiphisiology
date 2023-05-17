@@ -7,7 +7,7 @@ from spectools.models.resnet import ResNet, BasicBlock
 AN_layer = {0: "Conv1", 3: "Conv2", 6: "Conv3", 8: "Conv4", 10: "Conv5"}
 VGG16_layer = {0: "Conv1", 3: "Conv2", 6: "Conv3", 8: "Conv4", 11: "Conv5", 13: "Conv6", 16: "Conv7", 18: "Conv8"}
 VGG16b_layer = {0: "Conv1", 2: "Conv2", 5: "Conv3", 7: "Conv4", 10: "Conv5", 12: "Conv6", 14: "Conv7", 17: "Conv8", 19: "Conv9", 21: "Conv10", 24: "Conv11", 26: "Conv12", 28: "Conv13"}
-ResNet18_layer = {0: "Conv1", 4: "b-Block1.1", 5: "b-Block1.2", 6: "b-Block2.1", 7: "b-Block2.2",
+ResNet18_layer = {0: "Conv1", 3: "Maxpool", 4: "b-Block1.1", 5: "b-Block1.2", 6: "b-Block2.1", 7: "b-Block2.2",
                   8: "b-Block3.1", 9: "b-Block3.2", 10: "b-Block4.1", 11: "b-Block4.2"}
 AN_units = {3: 192, 6: 384, 8: 256}
 ResNet18_units = {0: 64, 4: 64, 5: 64, 6: 128, 7: 128, 8: 256, 9: 256, 10: 512, 11: 512}

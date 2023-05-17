@@ -23,7 +23,8 @@ def get_narrowing_stim(pxl, ival):
     center = (pxl-1)/2
 
     stims = []
-    for stride in range(1, pxl//2, ival):
+    grid = range(1, pxl//2, ival)
+    for stride in grid:
         lower = ceil(center - stride)
         upper = floor(center + stride + 1)
         
@@ -32,11 +33,11 @@ def get_narrowing_stim(pxl, ival):
         stim = np.expand_dims(stim, axis=(0,1))
         stim = np.tile(stim, (1,3,1,1))
         stims.append(stim)
-    return np.vstack(stims)
+    return np.vstack(stims), grid
     
 # main
-X = get_narrowing_stim(600, 1)
-rfs = get_RF_resnet(model)
+X, grid = get_narrowing_stim(400, 1)
+rfs = get_RF_resnet()
 print(rfs)
 
 # get response
@@ -54,8 +55,8 @@ for hkey in hkeys:
     target = ceil(rfs[hkey]//2)
     
     ax = fig.add_subplot(n, 3, count+1)
-    ax.plot(Rmean, color="k")
-    ax.fill_between(range(len(Rmean)), Rmean-Rstd, Rmean+Rstd, color="k", alpha=0.2)
+    ax.plot(grid, Rmean, color="k")
+    ax.fill_between(grid, Rmean-Rstd, Rmean+Rstd, color="k", alpha=0.2)
     ax.plot([target, target], [min(Rmean-Rstd), max(Rmean+Rstd)], color="b", linestyle="--")
     ax.set_title(ldic[hkey])
     count += 1
