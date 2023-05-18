@@ -1,3 +1,11 @@
+"""
+@ Steps for modifying mdl.ResNet18:
+    1. In _forward_impl in class ResNet18, replace pre_layers with [self.conv1, identity, self.relu, self.maxpool], with identity = nn.Identity()
+    2. In foward in BasicBlock, comment out all the bn lines.
+    3. In the downsample section, replace identity = self.downsample(x) with:
+        for child in self.downsample[:1]: identity = child(x)
+"""
+
 import torch
 import numpy as np
 import seaborn as sns
@@ -12,7 +20,7 @@ from spectools.responses import get_response_wrapper
 
 # hyperparameters
 mtype = "ResNet18"
-device = "cuda:0"
+device = "cpu"
 
 # load model, info and define parameters
 mfunc = mdl.get_resnet18; ldic = mdl.ResNet18_layer
@@ -44,19 +52,11 @@ def combine_dict2(dict1, dict2):
     return dict12
 
 # main
-X, grid = get_narrowing_stim(400, 40)
+X, grid = get_narrowing_stim(800, 10)
+fname = lambda hkey: f"hkey={hkey}_narrowing.npy"
+Rcs = get_response_wrapper(hkeys, torch.from_numpy(X), fname, mtype=mtype, save=False, override=True)
 rfs = get_RF_resnet()
 print(rfs)
-
-# get response
-fname = lambda hkey: f"hkey={hkey}_narrowing.npy"
-Rcs = {}
-for hkey in hkeys: Rcs[hkey] = []
-for ii in range(len(X)):
-    Rcs2 = get_response_wrapper(hkeys, torch.from_numpy(X[ii:ii+1]), fname, mtype="ResNet18", save=False, override=True)
-    for key in Rcs2.keys(): Rcs2[key] = [Rcs2[key].flatten()]
-    Rcs = combine_dict2(Rcs, Rcs2)
-for key in Rcs.keys(): Rcs[key] = np.array(Rcs[key]).T
 
 count = 0
 N = len(hkeys)
@@ -74,6 +74,7 @@ for hkey in hkeys:
     ax.plot([target, target], [min(Rmean-Rstd), max(Rmean+Rstd)], color="b", linestyle="--")
     ax.set_title(ldic[hkey])
     count += 1
+
 
 vis.common_label(fig, "pixels", "Average response of layer")
 plt.suptitle(f"Response as a function of narrowing stimulus for {mtype}")

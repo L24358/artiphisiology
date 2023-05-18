@@ -6,10 +6,9 @@ import spectools.basics as bcs
 import spectools.models.models as mdl
 import handytools.navigator as nav
 
-def get_response(hkeys, stim, folders, fname, mtype="AN", save=True):
+def get_response(hkeys, stim, folders, fname, mtype="AN", save=True, device="cpu"):
     # params
     torch.cuda.empty_cache()
-    device = "cpu"
 
     # load model
     if mtype == "AN": mfunc = mdl.get_alexnet
@@ -28,7 +27,7 @@ def get_response(hkeys, stim, folders, fname, mtype="AN", save=True):
         Rcs[hkey] = Rc
     return Rcs
 
-def get_response_wrapper(hkeys, stim, fname, mtype="AN", save=True, override=False):
+def get_response_wrapper(hkeys, stim, fname, mtype="AN", save=True, override=False, device="cpu"):
     Rcs = {}
     folders = [nav.resultpath, f"responses_{mtype}"]
 
@@ -41,10 +40,10 @@ def get_response_wrapper(hkeys, stim, fname, mtype="AN", save=True, override=Fal
             mkeys.append(hkey)
 
     if override:
-        Rcs2 = get_response(hkeys, stim, folders, fname, mtype=mtype, save=save)
+        Rcs2 = get_response(hkeys, stim, folders, fname, mtype=mtype, save=save, device=device)
         Rcs.update(Rcs2)
     elif mkeys != []:
-        Rcs2 = get_response(mkeys, stim, folders, fname, mtype=mtype, save=save)
+        Rcs2 = get_response(mkeys, stim, folders, fname, mtype=mtype, save=save, device=device)
         Rcs.update(Rcs2)
     return Rcs
 

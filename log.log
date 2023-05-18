@@ -3,8 +3,8 @@
 2. (O) Plot FOI vs maximal potential RF size for AN and VGG16.
 3. (O) Texture index for AN and VGG16.
 4. (O) FOI sanity check for vgg16 as well (with Wyeth's numbers).
-5. Sanity check RF for ResNet.
-6. Plot FOI vs max RF for Resnet18.
+5. (50%) Sanity check RF for ResNet.
+6. (O) Plot FOI vs max RF for Resnet18.
 7. (O) Fix VGG16b.
 8. Play with gdb and get_unit_by_rank if there's time.
 9. Plot FOI vs layer depth (and percentage?).
