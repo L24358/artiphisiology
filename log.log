@@ -1,3 +1,11 @@
+### 20230519 ###
+1. Plot errorbar (z transform)
+2. FC layers
+3. Mark pixel size, different pixel size (esp. for VGG16)
+4. Last block of Resnet18
+5. Try different receptive field sizes / consider rescaling
+6. Compare with stored images
+
 ### 20230515 ###
 1. (O) Sanity check RF for AN and VGG16.
 2. (O) Plot FOI vs maximal potential RF size for AN and VGG16.
