@@ -30,6 +30,11 @@ image_arrays = []
 for i in range(393): # 225 to 393 is texture
     image_array = nav.npload(nav.homepath, "data", "stimulus_TK", f"idx={i}_pxl=227.npy")
     image_array = np.expand_dims(image_array, (0,1))
+
+    temp = image_array.flatten()
+    print("Index: ", i, ", MIN: ", min(temp),  ", MAX: ", max(temp))
+
+    # TODO: consider rescaling
     image_array = np.tile(image_array, (1,3,1,1))/255.
     image_arrays.append(image_array)
 image_arrays = np.vstack(image_arrays)
