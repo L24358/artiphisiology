@@ -14,12 +14,9 @@ import handytools.navigator as nav
 import handytools.manipulator as man
 from spectools.responses import get_response_wrapper
 
-# argv
-argv_dic = man.argv_to_dic(sys.argv)
-
 # hyperparameters
-mtype = "VGG16b"
-hkeys = list(mdl.VGG16b_layer.keys())
+mtype = "ResNet18"
+hkeys = list(mdl.ResNet18_layer.keys())
 device = "cpu"
 
 # load model, info and define parameters
