@@ -5,6 +5,9 @@
 4. Last block of Resnet18
 5. Try different receptive field sizes / consider rescaling
 6. Compare with stored images
+7. Fisher z and log
+8. Check extreme values (gbp)
+9. Distribution of the response for different networks for a certain layer
 
 ### 20230515 ###
 1. (O) Sanity check RF for AN and VGG16.

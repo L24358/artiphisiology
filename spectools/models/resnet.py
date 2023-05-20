@@ -262,21 +262,25 @@ class ResNet(nn.Module):
 
         return nn.Sequential(*layers)
 
-    def _forward_impl(self, x: Tensor) -> Tensor:
+    def _forward_impl(self, x: Tensor, premature_quit = True) -> Tensor:
 
         x = x.float()
         
         pre_layers = [self.conv1, self.bn1, self.relu, self.maxpool]
         for i, layer in enumerate(pre_layers):
             x = layer(x)
-            if i in self.hidden_keys: self.hidden_info[i].append(x)
+            if i in self.hidden_keys:
+                self.hidden_info[i].append(x)
+                if premature_quit and i == max(self.hidden_keys): return x
 
         main_layers = [self.layer1, self.layer2, self.layer3, self.layer4]
         for layer in main_layers:
             for child in list(layer.children()): # per block
                 i += 1
                 x = child(x)
-                if i in self.hidden_keys: self.hidden_info[i].append(x)
+                if i in self.hidden_keys:
+                    self.hidden_info[i].append(x)
+                    if premature_quit and i == max(self.hidden_keys): return x
 
         x = self.avgpool(x)
         x = torch.flatten(x, 1)

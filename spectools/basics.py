@@ -2,6 +2,10 @@ import torch
 import numpy as np
 from handytools.catcher import AlgorithmError, InputError
 
+def detach(x, device):
+    if device == "cpu": return x.detach()
+    else: return x.cpu().detach()
+
 def get_centroid(image_array, tot_pxl):
     coors = []
     for i in range(tot_pxl):

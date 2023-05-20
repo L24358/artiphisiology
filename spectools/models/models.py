@@ -80,20 +80,13 @@ def get_resnet18(hidden_keys=[]):
     model.load_state_dict(params)
     return model
 
-def get_batch_hidden_info(model, stim, device="cpu"):
-    dic = {}
-    for hkey in model.hidden_keys: dic[hkey] = []
-
-    for batch in stim:
-        model(batch.unsqueeze(0).to(device))
-        for hkey in model.hidden_keys:
-            dic[hkey].append(model.hidden_info[hkey][0].detach().numpy())
-        model.reset_storage()
-
-    for hkey in model.hidden_keys:
-        dic[hkey] = np.vstack(dic[hkey])
-    return dic
-
+def load_model(mtype, hkeys, device):
+    if mtype == "AN": mfunc = get_alexnet
+    elif mtype == "VGG16": mfunc = get_vgg16
+    elif mtype == "VGG16b": mfunc = get_vgg16b
+    elif mtype == "ResNet18": mfunc = get_resnet18
+    model = mfunc(hidden_keys=hkeys).to(device)
+    return model
 
 class VGG16(nn.Module):
     def __init__(
@@ -150,7 +143,7 @@ class VGG16(nn.Module):
         self.reset_storage()
         self.flag_output = True
 
-    def forward(self, x: torch.Tensor, premature_quit=False, filt=lambda x:x) -> torch.Tensor:
+    def forward(self, x: torch.Tensor, premature_quit=True, filt=lambda x:x) -> torch.Tensor:
         x = x.float()
 
         # features
@@ -164,7 +157,7 @@ class VGG16(nn.Module):
             if i in self.hidden_keys:
                 self.hidden_info[i].append(filt(x))
 
-                if premature_quit:
+                if premature_quit and i == max(self.hidden_keys):
                     self.flag_output = False # only need to append once
                     return x
             
@@ -296,7 +289,6 @@ class VGG16b(nn.Module):
         self.hidden_info = {}
         self.update_hidden_keys()
 
-
 class AlexNet(nn.Module):
     def __init__(self, num_classes=1000, hidden_keys=[], in_place=True):
         super(AlexNet, self).__init__()
@@ -338,13 +330,13 @@ class AlexNet(nn.Module):
         self.hidden_info = {}
         self.update_hidden_keys(hidden_keys)
         
-    def forward(self, x, premature_quit=False):
+    def forward(self, x, premature_quit=True):
         x = x.float()
         for i, child in enumerate(list(self.features.children())):
             x = child(x)
             if i in self.hidden_keys:
                 self.hidden_info[i].append(x)
-                if premature_quit: return x
+                if premature_quit and i == max(self.hidden_keys): return x
         for j, child in enumerate(list(self.classifier.children())):
             x = child(x)
             if i+(j+1) in self.hidden_keys: self.hidden_info[i+j+1].append(x)

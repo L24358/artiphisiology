@@ -6,17 +6,34 @@ import spectools.basics as bcs
 import spectools.models.models as mdl
 import handytools.navigator as nav
 
-def get_response(hkeys, stim, folders, fname, mtype="AN", save=True, device="cpu"):
-    # params
-    torch.cuda.empty_cache()
+def get_batch_hidden_info(model, stim, device="cpu"):
+    """
+    Get hidden_info by passing batches of size=1 at a time.
 
-    # load model
-    if mtype == "AN": mfunc = mdl.get_alexnet
-    elif mtype == "VGG16": mfunc = mdl.get_vgg16
-    elif mtype == "VGG16b": mfunc = mdl.get_vgg16b
-    elif mtype == "ResNet18": mfunc = mdl.get_resnet18
-    model = mfunc(hidden_keys=hkeys).to(device)
-    Rs = mdl.get_batch_hidden_info(model, stim)
+    @ Args:
+        - stim (torch Tensor): shape = (B,C,H,W)
+    """
+    dic = {}
+    for hkey in model.hidden_keys: dic[hkey] = []
+
+    for batch in stim:
+        model(batch.unsqueeze(0).to(device)) # shape=(1,C,H,W)
+        for hkey in model.hidden_keys:
+            array = bcs.detach(model.hidden_info[hkey][0], device).numpy()
+            dic[hkey].append(array)
+        model.reset_storage()
+
+    for hkey in model.hidden_keys:
+        dic[hkey] = np.vstack(dic[hkey])
+    return dic
+
+def get_response(hkeys, stim, folders, fname, mtype="AN", save=True, device="cpu"):
+    """
+    Get response of model of type ``mtype`` with hidden keys ``hkeys`` to stimulus ``stim``.
+    """
+    torch.cuda.empty_cache()
+    model = mdl.load_model(mtype, hkeys, device)
+    Rs = get_batch_hidden_info(model, stim, device=device)
     print(f"Using {mtype} on {device}.")
 
     # save results
@@ -28,6 +45,13 @@ def get_response(hkeys, stim, folders, fname, mtype="AN", save=True, device="cpu
     return Rcs
 
 def get_response_wrapper(hkeys, stim, fname, mtype="AN", save=True, override=False, device="cpu"):
+    """
+    Get response of model of type ``mtype`` with hidden keys ``hkeys`` to stimulus ``stim``, if it is not saved.
+
+    @ Args:
+        - save (bool): save the responses, default: True
+        - override (bool): override the loading function, default: False
+    """
     Rcs = {}
     folders = [nav.resultpath, f"responses_{mtype}"]
 
@@ -40,9 +64,11 @@ def get_response_wrapper(hkeys, stim, fname, mtype="AN", save=True, override=Fal
             mkeys.append(hkey)
 
     if override:
+        print("Working on all keys: ", hkeys)
         Rcs2 = get_response(hkeys, stim, folders, fname, mtype=mtype, save=save, device=device)
         Rcs.update(Rcs2)
     elif mkeys != []:
+        print("Working on missing keys: ", mkeys)
         Rcs2 = get_response(mkeys, stim, folders, fname, mtype=mtype, save=save, device=device)
         Rcs.update(Rcs2)
     return Rcs
