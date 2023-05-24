@@ -33,6 +33,7 @@ def get_response(hkeys, stim, folders, fname, mtype="AN", save=True, device="cpu
     """
     torch.cuda.empty_cache()
     model = mdl.load_model(mtype, hkeys, device)
+    model.eval() # This matters for batchnorm2d
     Rs = get_batch_hidden_info(model, stim, device=device)
     print(f"Using {mtype} on {device}.")
 
