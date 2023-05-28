@@ -13,13 +13,19 @@ from copy import deepcopy
 
 # hyperparameters
 # AN:6, VGG16b: 19, ResNet18: 8
-mtype = "AN"
+mtype = "ResNet18"
 hkey = 8 # layer of interest
 top = 10
 plot = True
 device = "cuda:0"
 units = nav.npload(nav.resultpath, f"responses_{mtype}", f"hkey={hkey}_unitsTiMin.npy")
-path = path = "/dataloc/images_npy/"
+path = "/dataloc/images_npy/"
+
+# filter units
+for unit in units:
+    if nav.exists(nav.graphpath, f"gbp_{mtype}", f"hkey={hkey}_unit={unit}_top.png"):
+        units = np.setdiff1d(units, [unit])
+print(units)
 
 max_resp_dic = {} # key:unit, value: [coordinate index, R]
 for unit in units:
@@ -76,7 +82,7 @@ for unit in units:
             vis.print_batch(j, 1000)
 
         # plot top ``top`` images
-        vis2.show_img_and_grad_top(top, images, ggrads, f"hkey={hkey}_unit={unit}_top.png", title=f"Layer {mdl.AN_layer[hkey]}, Unit {unit} Top Responsive Images", folders=["gbp_AN"])
-        vis2.show_img_and_grad_top(top, images2, ggrads2, f"hkey={hkey}_unit={unit}_bottom.png", title=f"Layer {mdl.AN_layer[hkey]}, Unit {unit} Bottom Responsive Images", folders=["gbp_AN"])
+        vis2.show_img_and_grad_top(top, images, ggrads, f"hkey={hkey}_unit={unit}_top.png", title=f"Layer {mdl.get_names(mtype, hkey)}, Unit {unit} Top Responsive Images", folders=[f"gbp_{mtype}"])
+        vis2.show_img_and_grad_top(top, images2, ggrads2, f"hkey={hkey}_unit={unit}_bottom.png", title=f"Layer {mdl.get_names(mtype, hkey)}, Unit {unit} Bottom Responsive Images", folders=[f"gbp_{mtype}"])
 
     

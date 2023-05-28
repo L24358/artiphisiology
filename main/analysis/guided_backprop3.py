@@ -16,8 +16,8 @@ def get_50000_images(idxs=range(50000)):
     return torch.from_numpy(np.vstack(arrays))
 
 # hyperparameters
-# AN:8, VGG16b: 19, ResNet18: 8
-mtype = "AN"
+# AN:6, VGG16b: 19, ResNet18: 8
+mtype = "ResNet18"
 hkey = 8 # layer of interest
 device = "cuda:0"
 

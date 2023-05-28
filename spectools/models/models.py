@@ -14,8 +14,12 @@ ResNet18_units = {0: 64, 4: 64, 5: 64, 6: 128, 7: 128, 8: 256, 9: 256, 10: 512, 
 
 def get_units(mtype, hkey):
     if mtype == "AN": return AN_units[hkey]
-    elif mtype == "VGG16b": return VGG16b_layer[hkey]
     elif mtype == "ResNet18": return ResNet18_units[hkey]
+
+def get_names(mtype, hkey):
+    if mtype == "AN": return AN_layer[hkey]
+    elif mtype == "VGG16b": return VGG16b_layer[hkey]
+    elif mtype == "ResNet18": return ResNet18_layer[hkey]
 
 def get_parameters(name):
     if name == "alexnet":
