@@ -16,7 +16,7 @@ device = "cuda:0"
 if mtype == "AN": mfunc = mdl.get_alexnet; ldic = mdl.AN_layer
 elif mtype == "VGG16": mfunc = mdl.get_vgg16; ldic = mdl.VGG16_layer
 elif mtype == "VGG16b": mfunc = mdl.get_vgg16b; ldic = mdl.VGG16b_layer
-hkeys = list(ldic.keys())
+hkeys = list(ldic.keys())[:-3] # ignore FC layers
 model = mfunc(hidden_keys=hkeys).to(device)
 
 # narrowing stimulus

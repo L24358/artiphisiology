@@ -94,9 +94,9 @@ class BasicBlock(nn.Module):
             identity = self.downsample(x)
 
         out += identity
-        out = self.relu(out)
+        out2 = self.relu(out)
 
-        return out
+        return out2, out # Return pre-relu output
 
 
 class Bottleneck(nn.Module):
@@ -262,8 +262,7 @@ class ResNet(nn.Module):
 
         return nn.Sequential(*layers)
 
-    def _forward_impl(self, x: Tensor, premature_quit = True) -> Tensor:
-
+    def _forward_impl(self, x: Tensor, premature_quit = True, pre_relu = False) -> Tensor:
         x = x.float()
         
         pre_layers = [self.conv1, self.bn1, self.relu, self.maxpool]
@@ -277,9 +276,11 @@ class ResNet(nn.Module):
         for layer in main_layers:
             for child in list(layer.children()): # per block
                 i += 1
-                x = child(x)
+                x, x_prerelu = child(x)
                 if i in self.hidden_keys:
-                    self.hidden_info[i].append(x)
+                    if pre_relu: self.hidden_info[i].append(x_prerelu)
+                    else: self.hidden_info[i].append(x)
+
                     if premature_quit and i == max(self.hidden_keys): return x
 
         x = self.avgpool(x)
@@ -287,9 +288,38 @@ class ResNet(nn.Module):
         x = self.fc(x)
 
         return x
+    
+    def _forward_impl2(self, x: Tensor, premature_quit = True) -> Tensor:
+        # Encounters errors at downsample layers, only used for debugging
 
-    def forward(self, x: Tensor) -> Tensor:
-        return self._forward_impl(x)
+        x = x.float()
+        
+        pre_layers = [self.conv1, self.bn1, self.relu, self.maxpool]
+        for i, layer in enumerate(pre_layers):
+            x = layer(x)
+            if i in self.hidden_keys:
+                self.hidden_info[i].append(x)
+                if premature_quit and i == max(self.hidden_keys): return x
+
+        main_layers = [self.layer1, self.layer2, self.layer3, self.layer4]
+        for layer in main_layers:
+            for child in list(layer.children()): # per block
+                for baby in list(child.children()): # per component
+                    i += 1
+                    x = baby(x)
+                    if i in self.hidden_keys:
+                        self.hidden_info[i].append(x)
+                        if premature_quit and i == max(self.hidden_keys): return x
+
+        x = self.avgpool(x)
+        x = torch.flatten(x, 1)
+        x = self.fc(x)
+
+        return x
+
+    def forward(self, x: Tensor, by_block=True, pre_relu=False) -> Tensor:
+        if by_block: return self._forward_impl(x, pre_relu=pre_relu)
+        else: return self._forward_impl2(x) 
 
     def update_hidden_keys(self):
         dic = {}

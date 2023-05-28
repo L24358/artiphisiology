@@ -10,6 +10,7 @@ def get_RF(model):
         layers = model 
         adj = 1
 
+    rfs = {}
     strides, kernels, Ls = [1], [], [] # stride at layer -1 is 1
     for i, layer in enumerate(layers):
         if isinstance(layer, nn.Conv2d) or isinstance(layer, nn.MaxPool2d):
@@ -20,8 +21,7 @@ def get_RF(model):
             strides.append(s)
             kernels.append(k)
             Ls.append(i)
-            
-    rfs = {}
+
     for ll in range(1, len(Ls)+adj):
         summ = 1
         for l in range(0, ll):

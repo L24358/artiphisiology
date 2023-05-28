@@ -4,9 +4,9 @@ import numpy as np
 import handytools.navigator as nav
 from spectools.models.resnet import ResNet, BasicBlock
 
-AN_layer = {0: "Conv1", 3: "Conv2", 6: "Conv3", 8: "Conv4", 10: "Conv5"}
-VGG16_layer = {0: "Conv1", 3: "Conv2", 6: "Conv3", 8: "Conv4", 11: "Conv5", 13: "Conv6", 16: "Conv7", 18: "Conv8"}
-VGG16b_layer = {0: "Conv1", 2: "Conv2", 5: "Conv3", 7: "Conv4", 10: "Conv5", 12: "Conv6", 14: "Conv7", 17: "Conv8", 19: "Conv9", 21: "Conv10", 24: "Conv11", 26: "Conv12", 28: "Conv13"}
+AN_layer = {0: "Conv1", 3: "Conv2", 6: "Conv3", 8: "Conv4", 10: "Conv5", 15: "FC1", 18: "FC2", 20: "FC3"}
+VGG16_layer = {0: "Conv1", 3: "Conv2", 6: "Conv3", 8: "Conv4", 11: "Conv5", 13: "Conv6", 16: "Conv7", 18: "Conv8", 22: "FC1", 25: "FC2", 28: "FC3"}
+VGG16b_layer = {0: "Conv1", 2: "Conv2", 5: "Conv3", 7: "Conv4", 10: "Conv5", 12: "Conv6", 14: "Conv7", 17: "Conv8", 19: "Conv9", 21: "Conv10", 24: "Conv11", 26: "Conv12", 28: "Conv13", 32: "FC1", 35: "FC2", 38: "FC3"}
 ResNet18_layer = {0: "Conv1", 4: "b-Block1.1", 5: "b-Block1.2", 6: "b-Block2.1", 7: "b-Block2.2",
                   8: "b-Block3.1", 9: "b-Block3.2", 10: "b-Block4.1", 11: "b-Block4.2"}
 AN_units = {3: 192, 6: 384, 8: 256}
@@ -94,34 +94,34 @@ class VGG16(nn.Module):
         super().__init__()
         self.features = nn.Sequential(
             nn.Conv2d(3, 64, kernel_size=3, stride=1, padding=1),
-            nn.ReLU(inplace=True),
+            nn.ReLU(inplace=False),
             nn.MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False, return_indices=True),
             nn.Conv2d(64, 128, kernel_size=3, stride=1, padding=1),
-            nn.ReLU(inplace=True),
+            nn.ReLU(inplace=False),
             nn.MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False, return_indices=True),
             nn.Conv2d(128, 256, kernel_size=3, stride=1, padding=1),
-            nn.ReLU(inplace=True),
+            nn.ReLU(inplace=False),
             nn.Conv2d(256, 256, kernel_size=3, stride=1, padding=1),
-            nn.ReLU(inplace=True),
+            nn.ReLU(inplace=False),
             nn.MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False, return_indices=True),
             nn.Conv2d(256, 512, kernel_size=3, stride=1, padding=1), # layer 11
-            nn.ReLU(inplace=True),
+            nn.ReLU(inplace=False),
             nn.Conv2d(512, 512, kernel_size=3, stride=1, padding=1),
-            nn.ReLU(inplace=True),
+            nn.ReLU(inplace=False),
             nn.MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False, return_indices=True),
             nn.Conv2d(512, 512, kernel_size=3, stride=1, padding=1),
-            nn.ReLU(inplace=True),
+            nn.ReLU(inplace=False),
             nn.Conv2d(512, 512, kernel_size=3, stride=1, padding=1),
-            nn.ReLU(inplace=True),
+            nn.ReLU(inplace=False),
             nn.MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False, return_indices=True),
         )
         self.avgpool = nn.AdaptiveAvgPool2d((7, 7))
         self.classifier = nn.Sequential(
             nn.Linear(512 * 7 * 7, 4096),
-            nn.ReLU(True),
+            nn.ReLU(False),
             nn.Dropout(p=dropout),
             nn.Linear(4096, 4096),
-            nn.ReLU(True),
+            nn.ReLU(False),
             nn.Dropout(p=dropout),
             nn.Linear(4096, num_classes),
         )
@@ -173,7 +173,8 @@ class VGG16(nn.Module):
         # classifier
         for j, child in enumerate(list(self.classifier.children())):
             x = child(x)
-            if (i+1)+(j+1) in self.hidden_keys: self.hidden_info[i+j+2].append(filt(x)) # starts from layer i+2=(i+1)+(j+1) because j=0
+            if (i+1)+(j+1) in self.hidden_keys: 
+                self.hidden_info[i+j+2].append(filt(x)) # starts from layer i+2=(i+1)+(j+1) because j=0
         return x
 
     def update_hidden_keys(self):
@@ -191,7 +192,7 @@ class VGG16(nn.Module):
 
 class VGG16b(nn.Module):
     def __init__(
-        self, hidden_keys: list = [], num_classes: int = 1000, init_weights: bool = True, dropout: float = 0.5, in_place = True) -> None:
+        self, hidden_keys: list = [], num_classes: int = 1000, init_weights: bool = True, dropout: float = 0.5, in_place = False) -> None:
         super().__init__()
         self.features = nn.Sequential(
             nn.Conv2d(3, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1)),
@@ -276,7 +277,9 @@ class VGG16b(nn.Module):
         # classifier
         for j, child in enumerate(list(self.classifier.children())):
             x = child(x)
-            if (i+1)+(j+1) in self.hidden_keys: self.hidden_info[i+j+2].append(filt(x)) # starts from layer i+2=(i+1)+(j+1) because j=0
+            if (i+1)+(j+1) in self.hidden_keys:
+                self.hidden_info[i+j+2].append(filt(x)) # starts from layer i+2=(i+1)+(j+1) because j=0
+                
         return x
 
     def update_hidden_keys(self):
@@ -290,7 +293,7 @@ class VGG16b(nn.Module):
         self.update_hidden_keys()
 
 class AlexNet(nn.Module):
-    def __init__(self, num_classes=1000, hidden_keys=[], in_place=True):
+    def __init__(self, num_classes=1000, hidden_keys=[], in_place=False):
         super(AlexNet, self).__init__()
         self.features = nn.Sequential(
             nn.Conv2d(3, 64, kernel_size=11, stride=4, padding=2),
@@ -317,11 +320,11 @@ class AlexNet(nn.Module):
         self.classifier = nn.Sequential(
             nn.Dropout(0.5, inplace=False),
             nn.Linear(9216, 4096),
-            nn.ReLU(inplace=True),
+            nn.ReLU(inplace=in_place),
 
             nn.Dropout(0.5, inplace=False),
             nn.Linear(4096, 4096),
-            nn.ReLU(inplace=True),
+            nn.ReLU(inplace=in_place),
 
             nn.Linear(4096, num_classes)
         )

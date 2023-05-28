@@ -6,7 +6,7 @@ import spectools.basics as bcs
 import spectools.models.models as mdl
 import handytools.navigator as nav
 
-def get_batch_hidden_info(model, stim, device="cpu"):
+def get_batch_hidden_info(model, stim, device="cpu", **kwargs):
     """
     Get hidden_info by passing batches of size=1 at a time.
 
@@ -17,7 +17,7 @@ def get_batch_hidden_info(model, stim, device="cpu"):
     for hkey in model.hidden_keys: dic[hkey] = []
 
     for batch in stim:
-        model(batch.unsqueeze(0).to(device)) # shape=(1,C,H,W)
+        model(batch.unsqueeze(0).to(device), **kwargs) # shape=(1,C,H,W)
         for hkey in model.hidden_keys:
             array = bcs.detach(model.hidden_info[hkey][0], device).numpy()
             dic[hkey].append(array)
@@ -27,14 +27,14 @@ def get_batch_hidden_info(model, stim, device="cpu"):
         dic[hkey] = np.vstack(dic[hkey])
     return dic
 
-def get_response(hkeys, stim, folders, fname, mtype="AN", save=True, device="cpu"):
+def get_response(hkeys, stim, folders, fname, mtype="AN", save=True, device="cpu", **kwargs):
     """
     Get response of model of type ``mtype`` with hidden keys ``hkeys`` to stimulus ``stim``.
     """
     torch.cuda.empty_cache()
     model = mdl.load_model(mtype, hkeys, device)
     model.eval() # This matters for batchnorm2d
-    Rs = get_batch_hidden_info(model, stim, device=device)
+    Rs = get_batch_hidden_info(model, stim, device=device, **kwargs)
     print(f"Using {mtype} on {device}.")
 
     # save results
@@ -45,7 +45,7 @@ def get_response(hkeys, stim, folders, fname, mtype="AN", save=True, device="cpu
         Rcs[hkey] = Rc
     return Rcs
 
-def get_response_wrapper(hkeys, stim, fname, mtype="AN", save=True, override=False, device="cpu"):
+def get_response_wrapper(hkeys, stim, fname, mtype="AN", save=True, override=False, device="cpu", **kwargs):
     """
     Get response of model of type ``mtype`` with hidden keys ``hkeys`` to stimulus ``stim``, if it is not saved.
 
@@ -66,11 +66,11 @@ def get_response_wrapper(hkeys, stim, fname, mtype="AN", save=True, override=Fal
 
     if override:
         print("Working on all keys: ", hkeys)
-        Rcs2 = get_response(hkeys, stim, folders, fname, mtype=mtype, save=save, device=device)
+        Rcs2 = get_response(hkeys, stim, folders, fname, mtype=mtype, save=save, device=device, **kwargs)
         Rcs.update(Rcs2)
     elif mkeys != []:
         print("Working on missing keys: ", mkeys)
-        Rcs2 = get_response(mkeys, stim, folders, fname, mtype=mtype, save=save, device=device)
+        Rcs2 = get_response(mkeys, stim, folders, fname, mtype=mtype, save=save, device=device, **kwargs)
         Rcs.update(Rcs2)
     return Rcs
 

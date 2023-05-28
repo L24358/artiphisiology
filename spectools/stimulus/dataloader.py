@@ -28,3 +28,8 @@ class Imagenette(Dataset):
             return trans.Compose([trans.CenterCrop(227)])
         else:
             return transform
+        
+def get_50000_images(idxs=range(50000)):
+    path = "/dataloc/images_npy/"
+    arrays = [np.expand_dims(nav.npload(path, str(i)+".npy"), 0) for i in idxs]
+    return torch.from_numpy(np.vstack(arrays))
