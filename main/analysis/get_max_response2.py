@@ -18,7 +18,7 @@ hkey = 8 # layer of interest
 top = 10
 plot = True
 device = "cuda:0"
-units = nav.npload(nav.resultpath, f"responses_{mtype}", f"hkey={hkey}_unitsTiMin.npy")
+units = nav.npload(nav.resultpath, f"responses_{mtype}", f"hkey={hkey}_unitsCiMax.npy")
 path = "/dataloc/images_npy/"
 
 # filter units

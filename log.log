@@ -1,3 +1,10 @@
+### 20230528 ###
+           AN   VGG16b  Resnet18
+TI, min    O      P        O
+TI, max    O      P        O
+CI, min    O      X        O
+CI, max    O      X        O
+
 ### 20230519 ###
 1. Plot errorbar (z transform)
 2. FC layers
