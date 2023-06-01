@@ -1,3 +1,8 @@
+### 20230601 ###
+1. (O) Fix scaling (Fisher z, log)
+2. Plot extreme values
+3. Maybe color v texture
+
 ### 20230528 ###
            AN   VGG16b  Resnet18
 TI, min    O      P        O
