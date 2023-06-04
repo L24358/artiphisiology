@@ -1,9 +1,10 @@
 import numpy as np
 
 def responsive(r, criterion="nonzero_by_thre", **kwargs):
-    kw = {"thre": 20, "perc": 0.1}
+    kw = {"thre": 20, "perc": 0.1, "abs": False}
     kw.update(kwargs)
 
+    if kw["abs"]: r = abs(r)
     if criterion == "nonzero_by_thre":
         nonzeros = np.count_nonzero(np.array(r) >= 1e-3)
         if nonzeros >= kw["thre"]: return True # if non-zero responses are larger than threshold

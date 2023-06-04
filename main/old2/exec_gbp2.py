@@ -15,9 +15,9 @@ from spectools.stimulus.dataloader import Imagenette
 hkey = 6
 top = 10
 plot = True
-mtype = "ResNet18"
+mtype = "AN"
 device = "cuda:0"
-units = range(1) #range(mdl.get_units(mtype, hkey))
+units = range(mdl.get_units(mtype, hkey))
 
 # load
 if mtype == "AN": mfunc = mdl.get_alexnet

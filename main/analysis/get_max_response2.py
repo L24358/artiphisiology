@@ -13,12 +13,12 @@ from copy import deepcopy
 
 # hyperparameters
 # AN:6, VGG16b: 19, ResNet18: 8
-mtype = "ResNet18"
-hkey = 8 # layer of interest
+mtype = "AN"
+hkey = 3 # layer of interest
 top = 10
 plot = True
 device = "cuda:0"
-units = [35] #nav.npload(nav.resultpath, f"responses_{mtype}", f"hkey={hkey}_unitsCiMax.npy")
+units = nav.npload(nav.resultpath, f"responses_{mtype}", f"hkey={hkey}_unitsFoiMax.npy")
 path = "/dataloc/images_npy/"
 
 # filter units
