@@ -109,16 +109,16 @@ foi = get_foi()
 ti, tiresp = get_TI()
 ci, ciresp = get_CI()
 
-top = 5
+top = 3
 for hkey in hkeys[1:]: # ignore conv1
     idx_foi = man.nanargsort(foi[hkey]) # small to large, ignoring nan values
     idx_ti = man.idxargsort(np.array(ti[hkey]), np.where(tiresp[hkey])[0]) # sort only the responsive values
     idx_ci = man.idxargsort(np.array(ci[hkey]), np.where(ciresp[hkey])[0])
 
-    nav.npsave(idx_foi[:5], nav.resultpath, f"responses_{mtype}", f"hkey={hkey}_unitsFoiMin.npy")
-    nav.npsave(idx_foi[-5:], nav.resultpath, f"responses_{mtype}", f"hkey={hkey}_unitsFoiMax.npy")
-    nav.npsave(idx_ti[:5], nav.resultpath, f"responses_{mtype}", f"hkey={hkey}_unitsTiMin.npy")
-    nav.npsave(idx_ti[-5:], nav.resultpath, f"responses_{mtype}", f"hkey={hkey}_unitsTiMax.npy")
-    nav.npsave(idx_ci[:5], nav.resultpath, f"responses_{mtype}", f"hkey={hkey}_unitsCiMin.npy")
-    nav.npsave(idx_ci[-5:], nav.resultpath, f"responses_{mtype}", f"hkey={hkey}_unitsCiMax.npy")
+    nav.npsave(idx_foi[:top], nav.resultpath, f"responses_{mtype}", f"hkey={hkey}_unitsFoiMin.npy")
+    nav.npsave(idx_foi[-top:], nav.resultpath, f"responses_{mtype}", f"hkey={hkey}_unitsFoiMax.npy")
+    nav.npsave(idx_ti[:top], nav.resultpath, f"responses_{mtype}", f"hkey={hkey}_unitsTiMin.npy")
+    nav.npsave(idx_ti[-top:], nav.resultpath, f"responses_{mtype}", f"hkey={hkey}_unitsTiMax.npy")
+    nav.npsave(idx_ci[:top], nav.resultpath, f"responses_{mtype}", f"hkey={hkey}_unitsCiMin.npy")
+    nav.npsave(idx_ci[-top:], nav.resultpath, f"responses_{mtype}", f"hkey={hkey}_unitsCiMax.npy")
 
