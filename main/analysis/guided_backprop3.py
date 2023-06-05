@@ -26,7 +26,7 @@ is_resnet = mtype == "ResNet18"
 mod = mdl.load_model(mtype, [hkey], device)
 GBP = GuidedBackprop(mod, device=device, is_resnet=is_resnet)
 path = "/dataloc/images_npy/"
-units = nav.npload(nav.resultpath, f"responses_{mtype}", f"hkey={hkey}_unitsCiMax.npy")
+units = nav.npload(nav.resultpath, f"responses_{mtype}", f"hkey={hkey}_unitsCiMin.npy")
 
 def save_gbp(unit):
     print("Unit ", unit)
