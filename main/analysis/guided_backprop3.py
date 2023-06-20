@@ -1,5 +1,5 @@
 """
-Plot the guided backprop images for a particular unit for AN.
+Plot the guided backprop images for a particular unit for networks.
 """
 
 import torch

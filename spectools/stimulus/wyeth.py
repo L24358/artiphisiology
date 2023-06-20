@@ -177,6 +177,12 @@ def stimset_dict_shape_fo_1(xn, sz, lw, fg, bg):
     return splist
 
 def get_stimulus(fillflag, xn=227, sz=50, lw=1.5, fg=1.0, bg=0.0):
+    """
+    Implement Wyeth's get_stimulus function.
+
+    @ Args:
+        - fillflag (int): 1 or 0, whether to fill the shapes or not
+    """
     fname = [nav.datapath, "stimulus_wyeth", f"fill={fillflag}_xn={xn}_sz={sz}_lw={lw}_fg={fg}_bg={bg}.npy"]
 
     if not nav.exists(*fname):

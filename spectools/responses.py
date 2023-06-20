@@ -11,6 +11,7 @@ def get_batch_hidden_info(model, stim, device="cpu", **kwargs):
     Get hidden_info by passing batches of size=1 at a time.
 
     @ Args:
+        - model (nn.Module): needs to have hidden_keys implemented
         - stim (torch Tensor): shape = (B,C,H,W)
     """
     dic = {}
@@ -48,10 +49,11 @@ def get_response(hkeys, stim, folders, fname, mtype="AN", save=True, device="cpu
 def get_response_wrapper(hkeys, stim, fname, mtype="AN", save=True, override=False, device="cpu", **kwargs):
     """
     Get response of model of type ``mtype`` with hidden keys ``hkeys`` to stimulus ``stim``, if it is not saved.
+    If it is saved, then load saved response.
 
     @ Args:
         - save (bool): save the responses, default: True
-        - override (bool): override the loading function, default: False
+        - override (bool): override loading saved results and re-run them instead, default: False
     """
     Rcs = {}
     folders = [nav.resultpath, f"responses_{mtype}"]
@@ -76,7 +78,7 @@ def get_response_wrapper(hkeys, stim, fname, mtype="AN", save=True, override=Fal
 
 def get_drr(hkeys, folders, fname, mtype="AN"):
     """
-    Get dynamic range response.
+    Get dynamic range response. (UNFINISHED)
     """
     torch.cuda.empty_cache()
     from spectools.stimulus.dataloader import Imagenette
@@ -111,6 +113,9 @@ def get_drr(hkeys, folders, fname, mtype="AN"):
     return Rcs
 
 def get_drr_wrapper(hkeys, fname, mtype="AN"):
+    """
+    (UNFINISHED)
+    """
     Rcs = {}
     folders = [nav.resultpath, f"responses_{mtype}"]
     torch.cuda.empty_cache()
